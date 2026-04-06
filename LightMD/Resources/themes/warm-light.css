@@ -1,0 +1,224 @@
+:root {
+    --bg-primary: #faf9f6;
+    --bg-secondary: #f5f2ec;
+    --bg-code: #f0ede7;
+    --bg-code-border: #e6e2da;
+    --bg-table-alt: #f5f2ec;
+    --text-primary: #2c2825;
+    --text-secondary: #4a4540;
+    --text-tertiary: #6b6560;
+    --text-muted: #8a7d6b;
+    --accent: #c9a96e;
+    --link: #7d6534;
+    --code-text: #6b5c3e;
+    --font-body: -apple-system, "Helvetica Neue", sans-serif;
+    --font-code: "SF Mono", Menlo, monospace;
+    --font-size: 16px;
+    --line-height: 1.85;
+    --content-width: 720px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--bg-primary);
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: var(--font-size);
+    line-height: var(--line-height);
+    -webkit-font-smoothing: antialiased;
+}
+
+#content {
+    max-width: var(--content-width);
+    margin: 0 auto;
+    padding: 48px 32px;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-primary);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-top: 2em;
+    margin-bottom: 0.6em;
+}
+
+h1 {
+    font-size: 2em;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-top: 0;
+    padding-bottom: 0.3em;
+    border-bottom: 2px solid var(--accent);
+}
+
+h2 {
+    font-size: 1.5em;
+    padding-bottom: 0.25em;
+    border-bottom: 1px solid var(--bg-code-border);
+}
+
+h3 { font-size: 1.25em; }
+h4 { font-size: 1.1em; }
+h5 { font-size: 1em; }
+h6 { font-size: 0.9em; color: var(--text-tertiary); }
+
+/* Paragraphs */
+p {
+    margin-bottom: 1.2em;
+}
+
+/* Strong & Emphasis */
+strong { color: var(--text-primary); font-weight: 600; }
+em { font-style: italic; }
+
+/* Links */
+a {
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+a:hover {
+    color: var(--accent);
+}
+
+/* Lists */
+ul, ol {
+    padding-left: 1.5em;
+    margin-bottom: 1.2em;
+}
+
+li {
+    margin-bottom: 0.3em;
+}
+
+li > p {
+    margin-bottom: 0.5em;
+}
+
+/* Task lists */
+ul.contains-task-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+li.task-list-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5em;
+}
+
+li.task-list-item input[type="checkbox"] {
+    margin-top: 0.35em;
+    accent-color: var(--accent);
+}
+
+/* Code */
+code {
+    background: var(--bg-code);
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-family: var(--font-code);
+    font-size: 0.88em;
+    color: var(--code-text);
+}
+
+pre {
+    background: var(--bg-code);
+    border: 1px solid var(--bg-code-border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 1.5em;
+    overflow-x: auto;
+    line-height: 1.6;
+}
+
+pre code {
+    background: none;
+    padding: 0;
+    border-radius: 0;
+    font-size: 0.88em;
+    color: var(--text-secondary);
+}
+
+/* Blockquote */
+blockquote {
+    border-left: 3px solid var(--accent);
+    padding: 12px 20px;
+    margin: 1.5em 0;
+    background: var(--bg-secondary);
+    border-radius: 0 6px 6px 0;
+}
+
+blockquote p {
+    color: var(--text-tertiary);
+    margin-bottom: 0.5em;
+}
+
+blockquote p:last-child {
+    margin-bottom: 0;
+}
+
+/* Horizontal rule */
+hr {
+    border: none;
+    height: 1px;
+    background: var(--bg-code-border);
+    margin: 2em 0;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5em;
+    font-size: 0.94em;
+}
+
+thead tr {
+    border-bottom: 2px solid var(--accent);
+}
+
+th {
+    text-align: left;
+    padding: 10px 16px;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.88em;
+    letter-spacing: 0.02em;
+}
+
+td {
+    padding: 10px 16px;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--bg-code-border);
+}
+
+tbody tr:nth-child(even) {
+    background: var(--bg-table-alt);
+}
+
+/* Images */
+img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 1em 0;
+}
+
+/* Strikethrough */
+del {
+    color: var(--text-muted);
+    text-decoration: line-through;
+}
+
+/* Selection */
+::selection {
+    background: rgba(201, 169, 110, 0.25);
+}

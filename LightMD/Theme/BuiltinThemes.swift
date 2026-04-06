@@ -1,0 +1,366 @@
+import Foundation
+
+enum BuiltinThemes {
+
+    static let warmLight = """
+:root {
+    --bg-primary: #faf9f6;
+    --bg-secondary: #f5f2ec;
+    --bg-code: #f0ede7;
+    --bg-code-border: #e6e2da;
+    --bg-table-alt: #f5f2ec;
+    --text-primary: #2c2825;
+    --text-secondary: #4a4540;
+    --text-tertiary: #6b6560;
+    --text-muted: #8a7d6b;
+    --accent: #c9a96e;
+    --link: #7d6534;
+    --code-text: #6b5c3e;
+    --font-body: -apple-system, "Helvetica Neue", sans-serif;
+    --font-code: "SF Mono", Menlo, monospace;
+    --font-size: 16px;
+    --line-height: 1.85;
+    --content-width: 720px;
+}
+
+\(baseCSS)
+"""
+
+    static let warmDark = """
+:root {
+    --bg-primary: #1c1b19;
+    --bg-secondary: #232220;
+    --bg-code: #27261f;
+    --bg-code-border: #3a372e;
+    --bg-table-alt: #232220;
+    --text-primary: #e8e4dd;
+    --text-secondary: #b0a99e;
+    --text-tertiary: #8a8279;
+    --text-muted: #6b6259;
+    --accent: #c9a96e;
+    --link: #d4b87a;
+    --code-text: #c9a96e;
+    --font-body: -apple-system, "Helvetica Neue", sans-serif;
+    --font-code: "SF Mono", Menlo, monospace;
+    --font-size: 16px;
+    --line-height: 1.85;
+    --content-width: 720px;
+}
+
+\(baseCSS)
+"""
+
+    static let classicLight = """
+:root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f6f8fa;
+    --bg-code: #f6f8fa;
+    --bg-code-border: #e1e4e8;
+    --bg-table-alt: #f6f8fa;
+    --text-primary: #24292e;
+    --text-secondary: #374151;
+    --text-tertiary: #586069;
+    --text-muted: #6a737d;
+    --accent: #0366d6;
+    --link: #0366d6;
+    --code-text: #d63384;
+    --font-body: -apple-system, "Helvetica Neue", sans-serif;
+    --font-code: "SF Mono", Menlo, monospace;
+    --font-size: 16px;
+    --line-height: 1.85;
+    --content-width: 720px;
+}
+
+\(baseCSS)
+"""
+
+    static func css(for name: String) -> String {
+        switch name {
+        case "warm-light": return warmLight
+        case "warm-dark": return warmDark
+        case "classic-light": return classicLight
+        default: return warmLight
+        }
+    }
+
+    // Shared structural CSS used by all themes
+    private static let baseCSS = """
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--bg-primary);
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: var(--font-size);
+    line-height: var(--line-height);
+    -webkit-font-smoothing: antialiased;
+}
+
+#content {
+    max-width: var(--content-width);
+    margin: 0 auto;
+    padding: 48px 32px;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-primary);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-top: 2em;
+    margin-bottom: 0.6em;
+}
+
+h1 {
+    font-size: 2em;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-top: 0;
+    padding-bottom: 0.3em;
+    border-bottom: 2px solid var(--accent);
+}
+
+h2 {
+    font-size: 1.5em;
+    padding-bottom: 0.25em;
+    border-bottom: 1px solid var(--bg-code-border);
+}
+
+h3 { font-size: 1.25em; }
+h4 { font-size: 1.1em; }
+h5 { font-size: 1em; }
+h6 { font-size: 0.9em; color: var(--text-tertiary); }
+
+/* Paragraphs */
+p {
+    margin-bottom: 1.2em;
+}
+
+/* Strong & Emphasis */
+strong { color: var(--text-primary); font-weight: 600; }
+em { font-style: italic; }
+
+/* Links */
+a {
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+a:hover {
+    color: var(--accent);
+}
+
+/* Lists */
+ul, ol {
+    padding-left: 1.5em;
+    margin-bottom: 1.2em;
+}
+
+li {
+    margin-bottom: 0.3em;
+}
+
+li > p {
+    margin-bottom: 0.5em;
+}
+
+/* Task lists — checkbox only, no bullet */
+ul.contains-task-list,
+ul:has(> li > input[type="checkbox"]) {
+    list-style: none;
+    padding-left: 0;
+}
+
+li.task-list-item,
+li:has(> input[type="checkbox"]) {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5em;
+    list-style: none;
+}
+
+li.task-list-item input[type="checkbox"],
+li > input[type="checkbox"] {
+    margin-top: 0.35em;
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent);
+    flex-shrink: 0;
+}
+
+/* Checked checkbox: green checkmark */
+li > input[type="checkbox"]:checked {
+    accent-color: #34a853;
+}
+
+/* Code - inline */
+code {
+    background: var(--bg-code);
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-family: var(--font-code);
+    font-size: 0.88em;
+    color: var(--code-text);
+}
+
+/* Code - block */
+pre {
+    background: var(--bg-code);
+    border: 1px solid var(--bg-code-border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 1.5em;
+    overflow-x: auto;
+    line-height: 1.6;
+    position: relative;
+}
+
+/* Copy button */
+.copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: var(--bg-primary);
+    border: 1px solid var(--bg-code-border);
+    border-radius: 4px;
+    padding: 4px 6px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    font-size: 13px;
+    line-height: 1;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+pre:hover .copy-btn,
+blockquote:hover > .copy-btn {
+    opacity: 1;
+}
+
+.copy-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.copy-btn.copied {
+    color: #3d8b5f;
+    border-color: #3d8b5f;
+}
+
+pre code {
+    background: none;
+    padding: 0;
+    border-radius: 0;
+    font-size: 0.88em;
+    color: var(--text-secondary);
+}
+
+/* Blockquote */
+blockquote {
+    border-left: 3px solid var(--accent);
+    padding: 12px 20px;
+    margin: 1.5em 0;
+    background: var(--bg-secondary);
+    border-radius: 0 6px 6px 0;
+    position: relative;
+}
+
+blockquote p {
+    color: var(--text-tertiary);
+    margin-bottom: 0.5em;
+}
+
+blockquote p:last-child {
+    margin-bottom: 0;
+}
+
+/* Horizontal rule */
+hr {
+    border: none;
+    height: 1px;
+    background: var(--bg-code-border);
+    margin: 2em 0;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5em;
+    font-size: 0.94em;
+}
+
+thead tr {
+    border-bottom: 2px solid var(--accent);
+}
+
+th {
+    text-align: left;
+    padding: 10px 16px;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.88em;
+    letter-spacing: 0.02em;
+}
+
+td {
+    padding: 10px 16px;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--bg-code-border);
+}
+
+tbody tr:nth-child(even) {
+    background: var(--bg-table-alt);
+}
+
+/* Images */
+img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 1em 0;
+}
+
+/* Strikethrough */
+del {
+    color: var(--text-muted);
+    text-decoration: line-through;
+}
+
+/* Selection */
+::selection {
+    background: rgba(201, 169, 110, 0.25);
+}
+
+/* Print / PDF export */
+@media print {
+    body {
+        background: white !important;
+        color: #2c2825 !important;
+    }
+    #content {
+        max-width: 100% !important;
+        padding: 16px 0 !important;
+        margin: 0 !important;
+    }
+    .copy-btn {
+        display: none !important;
+    }
+    pre {
+        white-space: pre-wrap !important;
+        word-wrap: break-word !important;
+    }
+    table {
+        font-size: 0.85em !important;
+    }
+}
+"""
+}
