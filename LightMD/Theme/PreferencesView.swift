@@ -1,34 +1,31 @@
 import SwiftUI
 
 struct PreferencesView: View {
-    @Environment(AppState.self) private var appState
+    private let themeManager = ThemeManager.shared
 
     var body: some View {
-        @Bindable var tm = appState.themeManager
+        @Bindable var tm = themeManager
         TabView {
             appearanceTab
                 .tabItem { Label("Appearance", systemImage: "paintbrush") }
         }
         .frame(width: 450, height: 350)
-        .onChange(of: appState.themeManager.preferences.selectedTheme) { _, _ in
-            appState.themeManager.savePreferences()
-            appState.rebuildHTML()
+        .onChange(of: themeManager.preferences.selectedTheme) { _, _ in
+            themeManager.savePreferences()
         }
-        .onChange(of: appState.themeManager.preferences.fontFamily) { _, _ in
-            appState.themeManager.savePreferences()
-            appState.rebuildHTML()
+        .onChange(of: themeManager.preferences.fontFamily) { _, _ in
+            themeManager.savePreferences()
         }
-        .onChange(of: appState.themeManager.preferences.fontSize) { _, _ in
-            appState.themeManager.savePreferences()
-            appState.rebuildHTML()
+        .onChange(of: themeManager.preferences.fontSize) { _, _ in
+            themeManager.savePreferences()
         }
     }
 
     private var appearanceTab: some View {
         Form {
             Section("Theme") {
-                Picker("Theme", selection: Bindable(appState.themeManager).preferences.selectedTheme) {
-                    ForEach(appState.themeManager.availableThemes) { theme in
+                Picker("Theme", selection: Bindable(themeManager).preferences.selectedTheme) {
+                    ForEach(themeManager.availableThemes) { theme in
                         HStack {
                             ThemeSwatch(themeName: theme.name)
                             Text(theme.displayName)
@@ -40,7 +37,7 @@ struct PreferencesView: View {
             }
 
             Section("Font") {
-                Picker("Family", selection: Bindable(appState.themeManager).preferences.fontFamily) {
+                Picker("Family", selection: Bindable(themeManager).preferences.fontFamily) {
                     Text("System Sans").tag("system-sans")
                     Text("Serif").tag("serif")
                     Text("Mono").tag("mono")
@@ -48,11 +45,11 @@ struct PreferencesView: View {
                 .pickerStyle(.segmented)
 
                 HStack {
-                    Text("Size: \(appState.themeManager.preferences.fontSize)px")
+                    Text("Size: \(themeManager.preferences.fontSize)px")
                     Slider(
                         value: Binding(
-                            get: { Double(appState.themeManager.preferences.fontSize) },
-                            set: { appState.themeManager.preferences.fontSize = Int($0) }
+                            get: { Double(themeManager.preferences.fontSize) },
+                            set: { themeManager.preferences.fontSize = Int($0) }
                         ),
                         in: 12...24,
                         step: 1

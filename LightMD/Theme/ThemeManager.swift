@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 import Observation
 
 struct ThemeInfo: Identifiable, Codable {
@@ -17,6 +18,8 @@ struct UserPreferences: Codable {
 @MainActor
 @Observable
 class ThemeManager {
+    static let shared = ThemeManager()
+
     var preferences = UserPreferences()
 
     private let appSupportDir: URL = {
@@ -38,6 +41,17 @@ class ThemeManager {
 
     init() {
         loadPreferences()
+    }
+
+    // MARK: - Background Color
+
+    var backgroundColor: Color {
+        switch preferences.selectedTheme {
+        case "warm-light": return Color(hex: 0xfaf9f6)
+        case "warm-dark": return Color(hex: 0x1c1b19)
+        case "classic-light": return Color(hex: 0xffffff)
+        default: return Color(hex: 0xfaf9f6)
+        }
     }
 
     // MARK: - Current CSS

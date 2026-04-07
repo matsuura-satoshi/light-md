@@ -3,8 +3,12 @@ import WebKit
 
 struct MarkdownWebView: NSViewRepresentable {
     let htmlContent: String
+    let zoomLevel: Double
+    var scrollTarget: String?
+    var exportTrigger: UUID?
     var onTOCExtracted: (([TOCHeading]) -> Void)?
     var onActiveHeadingChanged: ((String) -> Void)?
+    var onScrollComplete: (() -> Void)?
 
     func makeCoordinator() -> Coordinator {
         Coordinator(
@@ -25,6 +29,7 @@ struct MarkdownWebView: NSViewRepresentable {
         webView.setValue(false, forKey: "drawsBackground")
         webView.navigationDelegate = context.coordinator
         context.coordinator.webView = webView
+        webView.pageZoom = zoomLevel
         return webView
     }
 
@@ -33,6 +38,28 @@ struct MarkdownWebView: NSViewRepresentable {
         coordinator.onTOCExtracted = onTOCExtracted
         coordinator.onActiveHeadingChanged = onActiveHeadingChanged
 
+        // Zoom
+        if webView.pageZoom != zoomLevel {
+            webView.pageZoom = zoomLevel
+        }
+
+        // Scroll to heading
+        if let target = scrollTarget, target != coordinator.lastScrollTarget {
+            coordinator.lastScrollTarget = target
+            let escaped = target.replacingOccurrences(of: "'", with: "\\'")
+            webView.evaluateJavaScript("scrollToHeading('\(escaped)')")
+            DispatchQueue.main.async {
+                self.onScrollComplete?()
+            }
+        }
+
+        // Export PDF
+        if let trigger = exportTrigger, trigger != coordinator.lastExportTrigger {
+            coordinator.lastExportTrigger = trigger
+            coordinator.exportPDF()
+        }
+
+        // HTML content
         guard htmlContent != coordinator.lastHTML else { return }
         coordinator.lastHTML = htmlContent
 
@@ -42,65 +69,24 @@ struct MarkdownWebView: NSViewRepresentable {
         }
     }
 
-    func scrollToHeading(_ id: String, webView: WKWebView) {
-        let escaped = id.replacingOccurrences(of: "'", with: "\\'")
-        webView.evaluateJavaScript("scrollToHeading('\(escaped)')")
-    }
-
     class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
         weak var webView: WKWebView?
         var savedScrollY: Double = 0
         var lastHTML: String = ""
+        var lastScrollTarget: String?
+        var lastExportTrigger: UUID?
         var onTOCExtracted: (([TOCHeading]) -> Void)?
         var onActiveHeadingChanged: ((String) -> Void)?
-
-        private nonisolated(unsafe) var observers: [Any] = []
 
         init(onTOCExtracted: (([TOCHeading]) -> Void)?, onActiveHeadingChanged: ((String) -> Void)?) {
             self.onTOCExtracted = onTOCExtracted
             self.onActiveHeadingChanged = onActiveHeadingChanged
-            super.init()
-
-            observers.append(NotificationCenter.default.addObserver(
-                forName: .scrollToHeading, object: nil, queue: .main
-            ) { [weak self] notification in
-                guard let id = notification.userInfo?["id"] as? String,
-                      let webView = self?.webView else { return }
-                let escaped = id.replacingOccurrences(of: "'", with: "\\'")
-                webView.evaluateJavaScript("scrollToHeading('\(escaped)')")
-            })
-
-            observers.append(NotificationCenter.default.addObserver(
-                forName: .zoomIn, object: nil, queue: .main
-            ) { [weak self] _ in
-                guard let webView = self?.webView else { return }
-                webView.pageZoom = min(webView.pageZoom + 0.1, 3.0)
-            })
-
-            observers.append(NotificationCenter.default.addObserver(
-                forName: .zoomOut, object: nil, queue: .main
-            ) { [weak self] _ in
-                guard let webView = self?.webView else { return }
-                webView.pageZoom = max(webView.pageZoom - 0.1, 0.5)
-            })
-
-            observers.append(NotificationCenter.default.addObserver(
-                forName: .zoomReset, object: nil, queue: .main
-            ) { [weak self] _ in
-                self?.webView?.pageZoom = 1.0
-            })
-
-            observers.append(NotificationCenter.default.addObserver(
-                forName: .exportPDF, object: nil, queue: .main
-            ) { [weak self] _ in
-                self?.exportPDF()
-            })
         }
 
         private var pdfWebView: WKWebView?
         private var pdfSaveURL: URL?
 
-        private func exportPDF() {
+        func exportPDF() {
             guard let webView else { return }
 
             let panel = NSSavePanel()
@@ -125,8 +111,7 @@ struct MarkdownWebView: NSViewRepresentable {
             self.pdfWebView = offscreen
             self.pdfSaveURL = saveURL
 
-            // Attach to a window so it actually renders
-            if let window = NSApp.mainWindow {
+            if let window = webView?.window {
                 window.contentView?.addSubview(offscreen)
                 offscreen.isHidden = true
             }
@@ -137,16 +122,12 @@ struct MarkdownWebView: NSViewRepresentable {
         private func finishPDFExport(_ offscreenWebView: WKWebView) {
             guard let saveURL = pdfSaveURL else { return }
 
-            // Get full content height, then resize and create PDF
             offscreenWebView.evaluateJavaScript("document.body.scrollHeight") { [weak self] result, _ in
                 let contentHeight = result as? CGFloat ?? 841.89
                 offscreenWebView.frame.size.height = contentHeight
 
-                // Small delay to let layout settle after resize
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                     let pdfConfig = WKPDFConfiguration()
-                    // Don't set rect — captures full scrollable content as one page
-                    // Then we split into A4 pages
 
                     offscreenWebView.createPDF(configuration: pdfConfig) { [weak self] pdfResult in
                         offscreenWebView.removeFromSuperview()
@@ -170,14 +151,7 @@ struct MarkdownWebView: NSViewRepresentable {
             }
         }
 
-        deinit {
-            for observer in observers {
-                NotificationCenter.default.removeObserver(observer)
-            }
-        }
-
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-            // Check if this is the offscreen PDF web view
             if webView === pdfWebView {
                 finishPDFExport(webView)
                 return
@@ -186,7 +160,6 @@ struct MarkdownWebView: NSViewRepresentable {
             if savedScrollY > 0 {
                 webView.evaluateJavaScript("window.scrollTo(0, \(savedScrollY))")
             }
-            // Inject and run TOC script
             let tocJS = TOCScript.source
             webView.evaluateJavaScript(tocJS)
         }

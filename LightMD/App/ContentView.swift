@@ -2,37 +2,42 @@ import SwiftUI
 import WebKit
 
 struct ContentView: View {
-    @Environment(AppState.self) private var appState
+    @State private var appState = AppState()
     @State private var tocHeadings: [TOCHeading] = []
     @State private var activeHeadingID: String?
-    @State private var isTOCVisible = false
     @State private var isDropTargeted = false
 
     var body: some View {
         ZStack(alignment: .trailing) {
             // Main content — always fills full width
             if appState.renderedHTML.isEmpty {
-                emptyState
+                appState.themeManager.backgroundColor
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 MarkdownWebView(
                     htmlContent: appState.renderedHTML,
+                    zoomLevel: appState.zoomLevel,
+                    scrollTarget: appState.scrollTarget,
+                    exportTrigger: appState.exportTrigger,
                     onTOCExtracted: { headings in
                         tocHeadings = headings
                     },
                     onActiveHeadingChanged: { id in
                         activeHeadingID = id
+                    },
+                    onScrollComplete: {
+                        appState.scrollTarget = nil
                     }
                 )
             }
 
             // TOC sidebar — overlaid on the right, doesn't push content
-            if isTOCVisible && !tocHeadings.isEmpty {
+            if appState.isTOCVisible && !tocHeadings.isEmpty {
                 TOCSidebar(
                     headings: tocHeadings,
                     activeID: activeHeadingID
                 ) { id in
-                    scrollToHeading(id)
+                    appState.scrollToHeading(id)
                 }
                 .transition(.move(edge: .trailing))
             }
@@ -51,17 +56,14 @@ struct ContentView: View {
                     .allowsHitTesting(false)
             }
         }
-        .animation(.easeInOut(duration: 0.2), value: isTOCVisible)
-        .onReceive(NotificationCenter.default.publisher(for: .toggleTOC)) { _ in
-            isTOCVisible.toggle()
-        }
+        .animation(.easeInOut(duration: 0.2), value: appState.isTOCVisible)
         .frame(minWidth: 600, minHeight: 400)
         .navigationTitle(appState.currentFileURL?.lastPathComponent ?? "LightMD")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 HStack(spacing: 4) {
                     Button {
-                        NotificationCenter.default.post(name: .exportPDF, object: nil)
+                        appState.requestExport()
                     } label: {
                         Image(systemName: "square.and.arrow.up")
                     }
@@ -69,45 +71,34 @@ struct ContentView: View {
                     .disabled(appState.renderedHTML.isEmpty)
 
                     Button {
-                        isTOCVisible.toggle()
+                        appState.isTOCVisible.toggle()
                     } label: {
                         Image(systemName: "list.bullet.rectangle")
                     }
                     .help("Toggle Table of Contents")
-                    .keyboardShortcut("t", modifiers: .command)
                 }
             }
         }
-    }
-
-    private var emptyState: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "doc.text")
-                .font(.system(size: 48, weight: .thin))
-                .foregroundStyle(.tertiary)
-            Text("Open a Markdown file to get started")
-                .font(.title3)
-                .foregroundStyle(.secondary)
-            Text("Drag & drop a .md file or press \u{2318}O")
-                .font(.callout)
-                .foregroundStyle(.tertiary)
+        .focusedValue(\.appState, appState)
+        .onAppear {
+            if appState.currentFileURL == nil, let pending = PendingFileQueue.shared.dequeue() {
+                appState.openFile(pending)
+            }
+        }
+        .onChange(of: appState.themeManager.preferences.selectedTheme) { _, _ in
+            if !appState.markdownContent.isEmpty {
+                appState.rebuildHTML()
+            }
+        }
+        .onChange(of: appState.themeManager.preferences.fontFamily) { _, _ in
+            if !appState.markdownContent.isEmpty {
+                appState.rebuildHTML()
+            }
+        }
+        .onChange(of: appState.themeManager.preferences.fontSize) { _, _ in
+            if !appState.markdownContent.isEmpty {
+                appState.rebuildHTML()
+            }
         }
     }
-
-    private func scrollToHeading(_ id: String) {
-        NotificationCenter.default.post(
-            name: .scrollToHeading,
-            object: nil,
-            userInfo: ["id": id]
-        )
-    }
-}
-
-extension Notification.Name {
-    static let scrollToHeading = Notification.Name("scrollToHeading")
-    static let zoomIn = Notification.Name("zoomIn")
-    static let zoomOut = Notification.Name("zoomOut")
-    static let zoomReset = Notification.Name("zoomReset")
-    static let exportPDF = Notification.Name("exportPDF")
-    static let toggleTOC = Notification.Name("toggleTOC")
 }
