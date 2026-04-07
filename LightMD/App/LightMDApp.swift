@@ -2,63 +2,67 @@ import SwiftUI
 
 @main
 struct LightMDApp: App {
-    @State private var appState = AppState()
+    @FocusedValue(\.appState) private var focusedAppState
 
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environment(appState)
                 .onOpenURL { url in
-                    appState.openFile(url)
+                    if let state = focusedAppState {
+                        state.openFile(url)
+                    } else {
+                        PendingFileQueue.shared.enqueue(url)
+                    }
                 }
         }
         .commands {
-            CommandGroup(replacing: .newItem) {
+            CommandGroup(after: .newItem) {
                 Button("Open...") {
-                    appState.showOpenPanel()
+                    focusedAppState?.showOpenPanel()
                 }
                 .keyboardShortcut("o")
+                .disabled(focusedAppState == nil)
             }
             CommandGroup(after: .newItem) {
                 Button("Export as PDF...") {
-                    NotificationCenter.default.post(name: .exportPDF, object: nil)
+                    focusedAppState?.requestExport()
                 }
                 .keyboardShortcut("e")
-                .disabled(appState.renderedHTML.isEmpty)
+                .disabled(focusedAppState?.renderedHTML.isEmpty ?? true)
             }
             CommandGroup(replacing: .printItem) {
                 Button("Export as PDF...") {
-                    NotificationCenter.default.post(name: .exportPDF, object: nil)
+                    focusedAppState?.requestExport()
                 }
                 .keyboardShortcut("p")
-                .disabled(appState.renderedHTML.isEmpty)
+                .disabled(focusedAppState?.renderedHTML.isEmpty ?? true)
             }
             CommandGroup(after: .sidebar) {
                 Button("Toggle Table of Contents") {
-                    NotificationCenter.default.post(name: .toggleTOC, object: nil)
+                    focusedAppState?.isTOCVisible.toggle()
                 }
                 .keyboardShortcut("i")
             }
             CommandGroup(after: .toolbar) {
                 Button("Reload") {
-                    appState.reloadFile()
+                    focusedAppState?.reloadFile()
                 }
                 .keyboardShortcut("r")
 
                 Divider()
 
                 Button("Zoom In") {
-                    NotificationCenter.default.post(name: .zoomIn, object: nil)
+                    focusedAppState?.zoomIn()
                 }
                 .keyboardShortcut("+")
 
                 Button("Zoom Out") {
-                    NotificationCenter.default.post(name: .zoomOut, object: nil)
+                    focusedAppState?.zoomOut()
                 }
                 .keyboardShortcut("-")
 
                 Button("Actual Size") {
-                    NotificationCenter.default.post(name: .zoomReset, object: nil)
+                    focusedAppState?.zoomReset()
                 }
                 .keyboardShortcut("0")
             }
@@ -66,7 +70,6 @@ struct LightMDApp: App {
 
         Settings {
             PreferencesView()
-                .environment(appState)
         }
     }
 }

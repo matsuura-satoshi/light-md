@@ -22,6 +22,8 @@
 		A74787D3C89743AAD5E2AA4F /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A732E68551220293B5EFF2 /* ThemeManager.swift */; };
 		DA325285FF6D8AD115E4B91B /* PreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DA8215313563D6DA7570038 /* PreferencesView.swift */; };
 		FD819EE5D092373EA1ECAC29 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8208E33A585D50C53487164C /* AppState.swift */; };
+		B1A2C3D4E5F60718293A4B5C /* FocusedAppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B3D4E5F6071829A3B4C5D6 /* FocusedAppState.swift */; };
+		D3E4F5061728394A5B6C7D8E /* PendingFileQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4F50617283940AB5C6D7E8F /* PendingFileQueue.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +43,8 @@
 		EBD329E02185772CE9BD6B43 /* DropOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropOverlay.swift; sourceTree = "<group>"; };
 		F090467C6FE64C8BEBA4A0A4 /* FileWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileWatcher.swift; sourceTree = "<group>"; };
 		F1DD24C0E2274387B96982EA /* LightMDApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightMDApp.swift; sourceTree = "<group>"; };
+		C2B3D4E5F6071829A3B4C5D6 /* FocusedAppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusedAppState.swift; sourceTree = "<group>"; };
+		E4F50617283940AB5C6D7E8F /* PendingFileQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingFileQueue.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +63,8 @@
 			isa = PBXGroup;
 			children = (
 				8208E33A585D50C53487164C /* AppState.swift */,
+				C2B3D4E5F6071829A3B4C5D6 /* FocusedAppState.swift */,
+				E4F50617283940AB5C6D7E8F /* PendingFileQueue.swift */,
 				5FDB43559100C510F37B02F9 /* TOCHeading.swift */,
 			);
 			path = Models;
@@ -207,6 +213,8 @@
 				7B19D3EEE46195C6D07BB250 /* TOCHeading.swift in Sources */,
 				7968056229B59F7742A7B3AA /* TOCSidebar.swift in Sources */,
 				A74787D3C89743AAD5E2AA4F /* ThemeManager.swift in Sources */,
+				B1A2C3D4E5F60718293A4B5C /* FocusedAppState.swift in Sources */,
+				D3E4F5061728394A5B6C7D8E /* PendingFileQueue.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
