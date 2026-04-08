@@ -31,8 +31,8 @@ struct ContentView: View {
                 )
             }
 
-            // TOC sidebar — overlaid on the right, doesn't push content
-            if appState.isTOCVisible && !tocHeadings.isEmpty {
+            // TOC sidebar — overlaid on the right
+            if appState.isTOCVisible {
                 TOCSidebar(
                     headings: tocHeadings,
                     activeID: activeHeadingID
@@ -79,7 +79,7 @@ struct ContentView: View {
                 }
             }
         }
-        .focusedValue(\.appState, appState)
+        .focusedSceneValue(\.appState, appState)
         .onAppear {
             if appState.currentFileURL == nil, let pending = PendingFileQueue.shared.dequeue() {
                 appState.openFile(pending)
