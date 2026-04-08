@@ -16,32 +16,41 @@ struct TOCSidebar: View {
                 .padding(.top, 16)
                 .padding(.bottom, 8)
 
-            ScrollView {
-                LazyVStack(alignment: .leading, spacing: 2) {
-                    ForEach(headings) { heading in
-                        Button {
-                            onSelect(heading.id)
-                        } label: {
-                            Text(heading.text)
-                                .font(.system(size: 13))
-                                .foregroundStyle(heading.id == activeID ? Color(hex: 0xc9a96e) : .secondary)
-                                .fontWeight(heading.id == activeID ? .medium : .regular)
-                                .lineLimit(2)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.vertical, 4)
-                                .padding(.horizontal, 12)
-                                .padding(.leading, CGFloat((heading.level - 1) * 12))
-                                .background(
-                                    heading.id == activeID
-                                        ? Color(hex: 0xc9a96e).opacity(0.08)
-                                        : Color.clear
-                                )
-                                .clipShape(RoundedRectangle(cornerRadius: 4))
+            if headings.isEmpty {
+                Spacer()
+                Text("No headings")
+                    .font(.system(size: 12))
+                    .foregroundStyle(.tertiary)
+                    .frame(maxWidth: .infinity)
+                Spacer()
+            } else {
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: 2) {
+                        ForEach(headings) { heading in
+                            Button {
+                                onSelect(heading.id)
+                            } label: {
+                                Text(heading.text)
+                                    .font(.system(size: 13))
+                                    .foregroundStyle(heading.id == activeID ? Color(hex: 0xc9a96e) : .secondary)
+                                    .fontWeight(heading.id == activeID ? .medium : .regular)
+                                    .lineLimit(2)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.vertical, 4)
+                                    .padding(.horizontal, 12)
+                                    .padding(.leading, CGFloat((heading.level - 1) * 12))
+                                    .background(
+                                        heading.id == activeID
+                                            ? Color(hex: 0xc9a96e).opacity(0.08)
+                                            : Color.clear
+                                    )
+                                    .clipShape(RoundedRectangle(cornerRadius: 4))
+                            }
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
                     }
+                    .padding(.horizontal, 4)
                 }
-                .padding(.horizontal, 4)
             }
         }
         .frame(width: 220)

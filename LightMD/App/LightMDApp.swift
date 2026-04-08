@@ -16,6 +16,7 @@ struct LightMDApp: App {
                     }
                 }
         }
+        .windowToolbarStyle(.unifiedCompact)
         .commands {
             CommandGroup(after: .newItem) {
                 Button("New Tab") {
