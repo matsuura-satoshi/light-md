@@ -18,6 +18,19 @@ struct LightMDApp: App {
         }
         .commands {
             CommandGroup(after: .newItem) {
+                Button("New Tab") {
+                    if let currentWindow = NSApp.keyWindow,
+                       let wc = currentWindow.windowController {
+                        wc.newWindowForTab(nil)
+                        if let newWindow = NSApp.keyWindow,
+                           newWindow !== currentWindow {
+                            currentWindow.addTabbedWindow(newWindow, ordered: .above)
+                            newWindow.makeKeyAndOrderFront(nil)
+                        }
+                    }
+                }
+                .keyboardShortcut("t")
+
                 Button("Open...") {
                     focusedAppState?.showOpenPanel()
                 }
