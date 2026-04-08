@@ -18,11 +18,6 @@ struct LightMDApp: App {
         }
         .commands {
             CommandGroup(after: .newItem) {
-                Button("New Tab") {
-                    NSApp.sendAction(#selector(AppDelegate.newTab(_:)), to: nil, from: nil)
-                }
-                .keyboardShortcut("t")
-
                 Button("Open...") {
                     focusedAppState?.showOpenPanel()
                 }
