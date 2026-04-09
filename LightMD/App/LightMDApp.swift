@@ -4,6 +4,13 @@ import SwiftUI
 struct LightMDApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @FocusedValue(\.appState) private var focusedAppState
+    @StateObject private var updateChecker = UpdateChecker()
+    @AppStorage("lastUpdateCheck") private var lastUpdateCheck: Double = 0
+
+    @State private var showUpdateAvailableAlert = false
+    @State private var showNoUpdateAlert = false
+    @State private var showUpdateErrorAlert = false
+    @State private var isManualCheck = false
 
     var body: some Scene {
         WindowGroup {
@@ -15,9 +22,47 @@ struct LightMDApp: App {
                         PendingFileQueue.shared.enqueue(url)
                     }
                 }
+                .onAppear {
+                    checkForUpdatesOnLaunch()
+                }
+                .alert("Update Available", isPresented: $showUpdateAvailableAlert) {
+                    Button("Download and Install") {
+                        Task { await updateChecker.downloadAndInstall() }
+                    }
+                    Button("View Release Page") {
+                        updateChecker.openReleasePage()
+                    }
+                    Button("Later", role: .cancel) {}
+                } message: {
+                    if let release = updateChecker.latestRelease {
+                        Text("A new version (\(release.tagName)) is available. Current version: v\(updateChecker.currentVersion)")
+                    }
+                }
+                .alert("No Updates Available", isPresented: $showNoUpdateAlert) {
+                    Button("OK", role: .cancel) {}
+                } message: {
+                    Text("You are running the latest version (v\(updateChecker.currentVersion)).")
+                }
+                .alert("Update Check Failed", isPresented: $showUpdateErrorAlert) {
+                    Button("OK", role: .cancel) {}
+                } message: {
+                    Text(updateChecker.errorMessage ?? "An unknown error occurred.")
+                }
         }
         .windowToolbarStyle(.unifiedCompact)
         .commands {
+            CommandGroup(replacing: .appInfo) {
+                Button("About LightMD") {
+                    NSApplication.shared.orderFrontStandardAboutPanel()
+                }
+
+                Button("Check for Updates...") {
+                    isManualCheck = true
+                    Task { await performUpdateCheck() }
+                }
+                .disabled(updateChecker.isChecking)
+            }
+
             CommandGroup(after: .newItem) {
                 Button("New Tab") {
                     if let currentWindow = NSApp.keyWindow,
@@ -85,6 +130,30 @@ struct LightMDApp: App {
 
         Settings {
             PreferencesView()
+        }
+    }
+
+    private func checkForUpdatesOnLaunch() {
+        let now = Date().timeIntervalSince1970
+        let oneDayInSeconds: Double = 24 * 60 * 60
+        guard now - lastUpdateCheck >= oneDayInSeconds else { return }
+
+        isManualCheck = false
+        Task { await performUpdateCheck() }
+    }
+
+    private func performUpdateCheck() async {
+        await updateChecker.checkForUpdates()
+        lastUpdateCheck = Date().timeIntervalSince1970
+
+        if updateChecker.updateAvailable {
+            showUpdateAvailableAlert = true
+        } else if updateChecker.errorMessage != nil {
+            if isManualCheck {
+                showUpdateErrorAlert = true
+            }
+        } else if isManualCheck {
+            showNoUpdateAlert = true
         }
     }
 }
