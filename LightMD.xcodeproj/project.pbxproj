@@ -25,6 +25,7 @@
 		B1A2C3D4E5F60718293A4B5C /* FocusedAppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B3D4E5F6071829A3B4C5D6 /* FocusedAppState.swift */; };
 		A3B4C5D6E7F80192A3B4C5D7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2E3D4C5B6A70819F2E3D4C6 /* AppDelegate.swift */; };
 		D3E4F5061728394A5B6C7D8E /* PendingFileQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4F50617283940AB5C6D7E8F /* PendingFileQueue.swift */; };
+		E5F60718293A4B5C6D7E8F01 /* UpdateChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6071829A3B4C5D6E7F80192 /* UpdateChecker.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,6 +48,7 @@
 		C2B3D4E5F6071829A3B4C5D6 /* FocusedAppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusedAppState.swift; sourceTree = "<group>"; };
 		F2E3D4C5B6A70819F2E3D4C6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E4F50617283940AB5C6D7E8F /* PendingFileQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingFileQueue.swift; sourceTree = "<group>"; };
+		F6071829A3B4C5D6E7F80192 /* UpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateChecker.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +82,7 @@
 				536FD9C24876C4A2585A4C27 /* FileWatcher */,
 				01FCAABFEA7B5B754E94E34D /* Models */,
 				4DE31FF20E39DE77984FD2D8 /* Rendering */,
+				071829A3B4C5D6E7F8019203 /* Services */,
 				26ED9B301D229508818359D0 /* Theme */,
 			);
 			path = LightMD;
@@ -120,6 +123,14 @@
 				F090467C6FE64C8BEBA4A0A4 /* FileWatcher.swift */,
 			);
 			path = FileWatcher;
+			sourceTree = "<group>";
+		};
+		071829A3B4C5D6E7F8019203 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				F6071829A3B4C5D6E7F80192 /* UpdateChecker.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 		B296F5C9447B87A0C7AC9BE5 /* App */ = {
@@ -219,6 +230,7 @@
 				B1A2C3D4E5F60718293A4B5C /* FocusedAppState.swift in Sources */,
 				D3E4F5061728394A5B6C7D8E /* PendingFileQueue.swift in Sources */,
 				A3B4C5D6E7F80192A3B4C5D7 /* AppDelegate.swift in Sources */,
+				E5F60718293A4B5C6D7E8F01 /* UpdateChecker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -293,7 +305,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.1.6;
+				MARKETING_VERSION = 1.2.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lightmd.LightMD;
 				PRODUCT_NAME = LightMD;
 				SDKROOT = macosx;
@@ -376,7 +388,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.1.6;
+				MARKETING_VERSION = 1.2.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lightmd.LightMD;
 				PRODUCT_NAME = LightMD;
 				SDKROOT = macosx;
