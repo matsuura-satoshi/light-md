@@ -53,7 +53,9 @@ struct LightMDApp: App {
         .commands {
             CommandGroup(replacing: .appInfo) {
                 Button("About LightMD") {
-                    NSApplication.shared.orderFrontStandardAboutPanel()
+                    NSApplication.shared.orderFrontStandardAboutPanel(options: [
+                        .version: ""
+                    ])
                 }
 
                 Button("Check for Updates...") {
