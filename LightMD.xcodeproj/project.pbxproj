@@ -26,6 +26,7 @@
 		A3B4C5D6E7F80192A3B4C5D7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2E3D4C5B6A70819F2E3D4C6 /* AppDelegate.swift */; };
 		D3E4F5061728394A5B6C7D8E /* PendingFileQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4F50617283940AB5C6D7E8F /* PendingFileQueue.swift */; };
 		E5F60718293A4B5C6D7E8F01 /* UpdateChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6071829A3B4C5D6E7F80192 /* UpdateChecker.swift */; };
+		A1B2C3D4E5F6A7B8C9D0E1F2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F6A7B8C9D0E1F2A3 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +50,7 @@
 		F2E3D4C5B6A70819F2E3D4C6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E4F50617283940AB5C6D7E8F /* PendingFileQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingFileQueue.swift; sourceTree = "<group>"; };
 		F6071829A3B4C5D6E7F80192 /* UpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateChecker.swift; sourceTree = "<group>"; };
+		B2C3D4E5F6A7B8C9D0E1F2A3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +79,7 @@
 		03BDB8B3038B7C945F5C2657 /* LightMD */ = {
 			isa = PBXGroup;
 			children = (
+				B2C3D4E5F6A7B8C9D0E1F2A3 /* Assets.xcassets */,
 				468E2C85C0A5B58896A24616 /* Info.plist */,
 				B296F5C9447B87A0C7AC9BE5 /* App */,
 				536FD9C24876C4A2585A4C27 /* FileWatcher */,
@@ -155,6 +158,17 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXResourcesBuildPhase section */
+		C3D4E5F6A7B8C9D0E1F2A3B4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1B2C3D4E5F6A7B8C9D0E1F2 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXNativeTarget section */
 		FB0FB79843404D72C71D26D7 /* LightMD */ = {
 			isa = PBXNativeTarget;
@@ -162,6 +176,7 @@
 			buildPhases = (
 				E7C673577C445A2605B444D9 /* Sources */,
 				14834CB9AEFC2860CED84F86 /* Frameworks */,
+				C3D4E5F6A7B8C9D0E1F2A3B4 /* Resources */,
 			);
 			buildRules = (
 			);
