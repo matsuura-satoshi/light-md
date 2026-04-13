@@ -27,6 +27,7 @@
 		D3E4F5061728394A5B6C7D8E /* PendingFileQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4F50617283940AB5C6D7E8F /* PendingFileQueue.swift */; };
 		E5F60718293A4B5C6D7E8F01 /* UpdateChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6071829A3B4C5D6E7F80192 /* UpdateChecker.swift */; };
 		A1B2C3D4E5F6A7B8C9D0E1F2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F6A7B8C9D0E1F2A3 /* Assets.xcassets */; };
+		D8A821D2FD8A496D856CD2D9 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 7B910DE080654ABDB620863E /* Credits.rtf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +52,7 @@
 		E4F50617283940AB5C6D7E8F /* PendingFileQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingFileQueue.swift; sourceTree = "<group>"; };
 		F6071829A3B4C5D6E7F80192 /* UpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateChecker.swift; sourceTree = "<group>"; };
 		B2C3D4E5F6A7B8C9D0E1F2A3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		7B910DE080654ABDB620863E /* Credits.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +83,7 @@
 			children = (
 				B2C3D4E5F6A7B8C9D0E1F2A3 /* Assets.xcassets */,
 				468E2C85C0A5B58896A24616 /* Info.plist */,
+				7B910DE080654ABDB620863E /* Credits.rtf */,
 				B296F5C9447B87A0C7AC9BE5 /* App */,
 				536FD9C24876C4A2585A4C27 /* FileWatcher */,
 				01FCAABFEA7B5B754E94E34D /* Models */,
@@ -164,6 +167,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1B2C3D4E5F6A7B8C9D0E1F2 /* Assets.xcassets in Resources */,
+				D8A821D2FD8A496D856CD2D9 /* Credits.rtf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -320,7 +324,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.2.8;
+				MARKETING_VERSION = 1.3.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lightmd.LightMD;
 				PRODUCT_NAME = LightMD;
 				SDKROOT = macosx;
@@ -403,7 +407,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.2.8;
+				MARKETING_VERSION = 1.3.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lightmd.LightMD;
 				PRODUCT_NAME = LightMD;
 				SDKROOT = macosx;

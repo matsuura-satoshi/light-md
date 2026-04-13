@@ -61,8 +61,8 @@ enum BuiltinThemes {
     --text-secondary: #374151;
     --text-tertiary: #586069;
     --text-muted: #6a737d;
-    --accent: #0366d6;
-    --link: #0366d6;
+    --accent: #374151;
+    --link: #374151;
     --code-text: #d63384;
     --font-body: -apple-system, "Helvetica Neue", sans-serif;
     --font-code: "SF Mono", Menlo, monospace;

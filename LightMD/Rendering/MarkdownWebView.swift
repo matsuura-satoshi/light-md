@@ -106,48 +106,61 @@ struct MarkdownWebView: NSViewRepresentable {
             let a4Width: CGFloat = 595.28
 
             let config = WKWebViewConfiguration()
-            let offscreen = WKWebView(frame: CGRect(x: -9999, y: -9999, width: a4Width, height: 1), configuration: config)
+            let offscreen = WKWebView(frame: CGRect(x: -9999, y: -9999, width: a4Width, height: 10), configuration: config)
             offscreen.navigationDelegate = self
             self.pdfWebView = offscreen
             self.pdfSaveURL = saveURL
 
             if let window = webView?.window {
                 window.contentView?.addSubview(offscreen)
-                offscreen.isHidden = true
             }
 
             offscreen.loadHTMLString(html, baseURL: nil)
         }
 
         private func finishPDFExport(_ offscreenWebView: WKWebView) {
-            guard let saveURL = pdfSaveURL else { return }
+            guard let saveURL = pdfSaveURL,
+                  let window = webView?.window else {
+                pdfWebView?.removeFromSuperview()
+                pdfWebView = nil
+                pdfSaveURL = nil
+                return
+            }
 
-            offscreenWebView.evaluateJavaScript("document.body.scrollHeight") { [weak self] result, _ in
-                let contentHeight = result as? CGFloat ?? 841.89
-                offscreenWebView.frame.size.height = contentHeight
+            let printInfo = NSPrintInfo()
+            printInfo.paperSize = NSSize(width: 595.28, height: 841.89)
+            printInfo.topMargin = 36
+            printInfo.bottomMargin = 36
+            printInfo.leftMargin = 32
+            printInfo.rightMargin = 32
+            printInfo.horizontalPagination = .fit
+            printInfo.verticalPagination = .automatic
+            printInfo.isHorizontallyCentered = true
+            printInfo.isVerticallyCentered = false
+            printInfo.jobDisposition = .save
+            printInfo.dictionary().setValue(saveURL, forKey: NSPrintInfo.AttributeKey.jobSavingURL.rawValue)
 
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    let pdfConfig = WKPDFConfiguration()
+            let printOp = offscreenWebView.printOperation(with: printInfo)
+            printOp.showsPrintPanel = false
+            printOp.showsProgressPanel = false
 
-                    offscreenWebView.createPDF(configuration: pdfConfig) { [weak self] pdfResult in
-                        offscreenWebView.removeFromSuperview()
-                        self?.pdfWebView = nil
-                        self?.pdfSaveURL = nil
+            printOp.runModal(
+                for: window,
+                delegate: self,
+                didRun: #selector(printOperationDidRun(_:success:contextInfo:)),
+                contextInfo: nil
+            )
+        }
 
-                        switch pdfResult {
-                        case .success(let fullData):
-                            let a4Data = PDFPaginator.paginate(
-                                pdfData: fullData,
-                                pageWidth: 595.28,
-                                pageHeight: 841.89,
-                                margin: 48
-                            )
-                            try? a4Data.write(to: saveURL)
-                        case .failure:
-                            break
-                        }
-                    }
-                }
+        @objc nonisolated private func printOperationDidRun(
+            _ printOperation: NSPrintOperation,
+            success: Bool,
+            contextInfo: UnsafeMutableRawPointer?
+        ) {
+            DispatchQueue.main.async { [weak self] in
+                self?.pdfWebView?.removeFromSuperview()
+                self?.pdfWebView = nil
+                self?.pdfSaveURL = nil
             }
         }
 
