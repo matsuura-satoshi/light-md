@@ -31,14 +31,16 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.lightmd.LightMD
         PRODUCT_NAME: LightMD
-        MARKETING_VERSION: "0.1.0"
-        CURRENT_PROJECT_VERSION: 1
+        MARKETING_VERSION: "1.4.11"
+        CURRENT_PROJECT_VERSION: 3
         INFOPLIST_FILE: LightMD/Info.plist
         SWIFT_VERSION: "6.0"
         MACOSX_DEPLOYMENT_TARGET: "14.0"
     info:
       path: LightMD/Info.plist
       properties:
+        CFBundleShortVersionString: "1.4.11"
+        CFBundleVersion: "3"
         CFBundleDisplayName: LightMD
         CFBundleName: LightMD
         CFBundleDocumentTypes:
