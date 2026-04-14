@@ -15,6 +15,13 @@ struct LightMDApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .onOpenURL { url in
+                    // Two-path URL delivery: SwiftUI's onOpenURL and
+                    // AppDelegate.application(_:open:) both enqueue, and the
+                    // queue dedupes. Whichever path the platform fires on
+                    // cold launch, the URL ends up in the queue.
+                    PendingFileQueue.shared.enqueue(url)
+                }
                 .onAppear {
                     checkForUpdatesOnLaunch()
                 }
