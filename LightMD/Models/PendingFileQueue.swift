@@ -1,10 +1,12 @@
 import Foundation
+import Observation
 
 @MainActor
+@Observable
 class PendingFileQueue {
     static let shared = PendingFileQueue()
 
-    private var urls: [URL] = []
+    private(set) var urls: [URL] = []
 
     func enqueue(_ url: URL) {
         urls.append(url)

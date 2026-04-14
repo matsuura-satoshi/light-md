@@ -3,8 +3,8 @@ import Foundation
 @MainActor
 class FileWatcher {
     private var source: DispatchSourceFileSystemObject?
-    private var fileDescriptor: Int32 = -1
     private var debounceWorkItem: DispatchWorkItem?
+    private var rewatchWorkItem: DispatchWorkItem?
     private let debounceInterval: TimeInterval = 0.1
     private var currentURL: URL?
 
@@ -14,40 +14,35 @@ class FileWatcher {
         stop()
         currentURL = url
 
-        fileDescriptor = open(url.path, O_EVTONLY)
-        guard fileDescriptor >= 0 else { return }
+        let fd = open(url.path, O_EVTONLY)
+        guard fd >= 0 else { return }
 
         let source = DispatchSource.makeFileSystemObjectSource(
-            fileDescriptor: fileDescriptor,
+            fileDescriptor: fd,
             eventMask: [.write, .extend, .rename, .delete],
             queue: .main
         )
 
-        source.setEventHandler { [weak self] in
+        source.setEventHandler { [weak self, weak source] in
             MainActor.assumeIsolated {
-                guard let self else { return }
+                guard let self, let source else { return }
                 let flags = source.data
                 if flags.contains(.delete) || flags.contains(.rename) {
-                    let savedURL = self.currentURL
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
-                        MainActor.assumeIsolated {
-                            guard let self, let url = savedURL else { return }
-                            self.watch(url: url)
-                            self.debounceAndNotify()
-                        }
-                    }
+                    // Atomic-save editors (vim, VSCode, Obsidian, ...) replace
+                    // the file via rename, unlinking the old inode our fd is
+                    // bound to. Re-open against the path to track the new one.
+                    self.scheduleRewatch()
                     return
                 }
                 self.debounceAndNotify()
             }
         }
 
-        source.setCancelHandler { [weak self] in
-            MainActor.assumeIsolated {
-                if let fd = self?.fileDescriptor, fd >= 0 {
-                    close(fd)
-                }
-            }
+        // Bind fd by value so each source's cancel handler closes the exact
+        // descriptor it was created with — a shared property would get
+        // overwritten by the next watch() and we'd close the wrong fd.
+        source.setCancelHandler {
+            close(fd)
         }
 
         source.resume()
@@ -59,6 +54,22 @@ class FileWatcher {
         source = nil
         debounceWorkItem?.cancel()
         debounceWorkItem = nil
+        rewatchWorkItem?.cancel()
+        rewatchWorkItem = nil
+    }
+
+    private func scheduleRewatch() {
+        guard let url = currentURL else { return }
+        rewatchWorkItem?.cancel()
+        let workItem = DispatchWorkItem { [weak self] in
+            MainActor.assumeIsolated {
+                guard let self else { return }
+                self.watch(url: url)
+                self.debounceAndNotify()
+            }
+        }
+        rewatchWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: workItem)
     }
 
     private func debounceAndNotify() {
@@ -73,7 +84,6 @@ class FileWatcher {
     }
 
     nonisolated deinit {
-        // DispatchSource cancel is thread-safe
         source?.cancel()
     }
 }

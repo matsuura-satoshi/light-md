@@ -27,6 +27,9 @@ struct MarkdownWebView: NSViewRepresentable {
 
         let webView = WKWebView(frame: .zero, configuration: config)
         webView.setValue(false, forKey: "drawsBackground")
+        // Prevent WebKit from intercepting file drops so the SwiftUI .onDrop
+        // on ContentView reliably receives them.
+        webView.unregisterDraggedTypes()
         webView.navigationDelegate = context.coordinator
         context.coordinator.webView = webView
         webView.pageZoom = zoomLevel

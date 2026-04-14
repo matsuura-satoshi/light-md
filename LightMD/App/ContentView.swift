@@ -1,5 +1,6 @@
 import SwiftUI
 import WebKit
+import UniformTypeIdentifiers
 
 struct ContentView: View {
     @State private var appState = AppState()
@@ -9,11 +10,14 @@ struct ContentView: View {
 
     var body: some View {
         ZStack(alignment: .trailing) {
-            // Main content — always fills full width
-            if appState.renderedHTML.isEmpty {
-                appState.themeManager.backgroundColor
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else {
+            // Theme background — always rendered underneath so that the
+            // transparent WKWebView never exposes the NSWindow default
+            // background during its async HTML load.
+            appState.themeManager.backgroundColor
+                .ignoresSafeArea()
+
+            // Main content — overlays the theme background once rendered.
+            if !appState.renderedHTML.isEmpty {
                 MarkdownWebView(
                     htmlContent: appState.renderedHTML,
                     zoomLevel: appState.zoomLevel,
@@ -42,11 +46,6 @@ struct ContentView: View {
                 .transition(.move(edge: .trailing))
             }
 
-            // Transparent drop zone — always active, passes clicks through
-            DropOverlay(onDrop: { url in
-                appState.openFile(url)
-            }, isTargeted: $isDropTargeted)
-
             // Drop highlight overlay
             if isDropTargeted {
                 RoundedRectangle(cornerRadius: 8)
@@ -59,6 +58,26 @@ struct ContentView: View {
         .animation(.easeInOut(duration: 0.2), value: appState.isTOCVisible)
         .frame(minWidth: 600, minHeight: 400)
         .navigationTitle(appState.currentFileURL?.lastPathComponent ?? "LightMD")
+        .onDrop(of: [.fileURL], isTargeted: $isDropTargeted) { providers in
+            guard let provider = providers.first else { return false }
+            provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier) { item, _ in
+                let url: URL?
+                if let data = item as? Data {
+                    url = URL(dataRepresentation: data, relativeTo: nil)
+                } else if let u = item as? URL {
+                    url = u
+                } else {
+                    url = nil
+                }
+                guard let url,
+                      ["md", "markdown"].contains(url.pathExtension.lowercased())
+                else { return }
+                Task { @MainActor in
+                    appState.openFile(url)
+                }
+            }
+            return true
+        }
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 HStack(spacing: 4) {
@@ -81,9 +100,10 @@ struct ContentView: View {
         }
         .focusedSceneValue(\.appState, appState)
         .onAppear {
-            if appState.currentFileURL == nil, let pending = PendingFileQueue.shared.dequeue() {
-                appState.openFile(pending)
-            }
+            drainPendingFiles()
+        }
+        .onChange(of: PendingFileQueue.shared.urls.count) { _, _ in
+            drainPendingFiles()
         }
         .onChange(of: appState.themeManager.preferences.selectedTheme) { _, _ in
             if !appState.markdownContent.isEmpty {
@@ -99,6 +119,12 @@ struct ContentView: View {
             if !appState.markdownContent.isEmpty {
                 appState.rebuildHTML()
             }
+        }
+    }
+
+    private func drainPendingFiles() {
+        if let pending = PendingFileQueue.shared.dequeue() {
+            appState.openFile(pending)
         }
     }
 }

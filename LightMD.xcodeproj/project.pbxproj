@@ -9,25 +9,24 @@
 /* Begin PBXBuildFile section */
 		16E95E4414D74BAF6E14E8C3 /* PDFPaginator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1508B89D9FAA5E649E727E9D /* PDFPaginator.swift */; };
 		20FCB2C2E5035241C541CB2D /* cmark in Frameworks */ = {isa = PBXBuildFile; productRef = D2C11EEC2EFE8E342A6787E6 /* cmark */; };
+		2940359DDB899050891DD29F /* PendingFileQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2F3E2C7F96E800DDC10264E /* PendingFileQueue.swift */; };
 		2EF1E4CBF723673A5B8F1025 /* BuiltinThemes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE7EE906F0B83AE785AAD2E /* BuiltinThemes.swift */; };
 		36C088D7535D19516DB0B115 /* HTMLTemplateBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 003D232267D47DE6E81FFC93 /* HTMLTemplateBuilder.swift */; };
+		3A7FCCD1A20DD4C80A112AF3 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = B1D948FF5EB7CCEE5ABD6AB8 /* Credits.rtf */; };
 		4EDEC5D37C10CADC237C84D7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594B055503787632B7BF4941 /* ContentView.swift */; };
+		55652093FF57DF881C40B1C6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A985C6DC6367AEC47A514AAE /* Assets.xcassets */; };
 		578F7CA3EF191F28E1CF4665 /* MarkdownRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33C4F5BBC29760C7ACC469B7 /* MarkdownRenderer.swift */; };
 		61348C0A6730DE00826A52C5 /* MarkdownWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11FF58FDB20DB4FEFDF88270 /* MarkdownWebView.swift */; };
+		724194398257C2C8492735D9 /* UpdateChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 394ED5C3C7956155D2D65B36 /* UpdateChecker.swift */; };
 		7968056229B59F7742A7B3AA /* TOCSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324D6E36CD52C5E98BBD4891 /* TOCSidebar.swift */; };
 		7B19D3EEE46195C6D07BB250 /* TOCHeading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FDB43559100C510F37B02F9 /* TOCHeading.swift */; };
 		8925B6BD9AD4BFB4B17FEA2B /* LightMDApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DD24C0E2274387B96982EA /* LightMDApp.swift */; };
-		A1BAFBD9653A0BAC15283367 /* DropOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBD329E02185772CE9BD6B43 /* DropOverlay.swift */; };
+		9E9BF1DFC0F775193D641A2F /* FocusedAppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C77566CDA21AF7FBE7DE32 /* FocusedAppState.swift */; };
 		A6444A83EEC72D7CEC424370 /* FileWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = F090467C6FE64C8BEBA4A0A4 /* FileWatcher.swift */; };
 		A74787D3C89743AAD5E2AA4F /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A732E68551220293B5EFF2 /* ThemeManager.swift */; };
+		C4A3DAC9404941116977958C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6235DEAF6B1917DB55814B66 /* AppDelegate.swift */; };
 		DA325285FF6D8AD115E4B91B /* PreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DA8215313563D6DA7570038 /* PreferencesView.swift */; };
 		FD819EE5D092373EA1ECAC29 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8208E33A585D50C53487164C /* AppState.swift */; };
-		B1A2C3D4E5F60718293A4B5C /* FocusedAppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B3D4E5F6071829A3B4C5D6 /* FocusedAppState.swift */; };
-		A3B4C5D6E7F80192A3B4C5D7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2E3D4C5B6A70819F2E3D4C6 /* AppDelegate.swift */; };
-		D3E4F5061728394A5B6C7D8E /* PendingFileQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4F50617283940AB5C6D7E8F /* PendingFileQueue.swift */; };
-		E5F60718293A4B5C6D7E8F01 /* UpdateChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6071829A3B4C5D6E7F80192 /* UpdateChecker.swift */; };
-		A1B2C3D4E5F6A7B8C9D0E1F2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F6A7B8C9D0E1F2A3 /* Assets.xcassets */; };
-		D8A821D2FD8A496D856CD2D9 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 7B910DE080654ABDB620863E /* Credits.rtf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,22 +36,21 @@
 		24BE8259FB9C144D0B6370A8 /* LightMD.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LightMD.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		324D6E36CD52C5E98BBD4891 /* TOCSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TOCSidebar.swift; sourceTree = "<group>"; };
 		33C4F5BBC29760C7ACC469B7 /* MarkdownRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownRenderer.swift; sourceTree = "<group>"; };
+		394ED5C3C7956155D2D65B36 /* UpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateChecker.swift; sourceTree = "<group>"; };
 		468E2C85C0A5B58896A24616 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		594B055503787632B7BF4941 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		5FDB43559100C510F37B02F9 /* TOCHeading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TOCHeading.swift; sourceTree = "<group>"; };
+		6235DEAF6B1917DB55814B66 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6DA8215313563D6DA7570038 /* PreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesView.swift; sourceTree = "<group>"; };
 		8208E33A585D50C53487164C /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		8CE7EE906F0B83AE785AAD2E /* BuiltinThemes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuiltinThemes.swift; sourceTree = "<group>"; };
+		A985C6DC6367AEC47A514AAE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B1D948FF5EB7CCEE5ABD6AB8 /* Credits.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
+		B2F3E2C7F96E800DDC10264E /* PendingFileQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingFileQueue.swift; sourceTree = "<group>"; };
 		C0A732E68551220293B5EFF2 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
-		EBD329E02185772CE9BD6B43 /* DropOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropOverlay.swift; sourceTree = "<group>"; };
+		E3C77566CDA21AF7FBE7DE32 /* FocusedAppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusedAppState.swift; sourceTree = "<group>"; };
 		F090467C6FE64C8BEBA4A0A4 /* FileWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileWatcher.swift; sourceTree = "<group>"; };
 		F1DD24C0E2274387B96982EA /* LightMDApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightMDApp.swift; sourceTree = "<group>"; };
-		C2B3D4E5F6071829A3B4C5D6 /* FocusedAppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusedAppState.swift; sourceTree = "<group>"; };
-		F2E3D4C5B6A70819F2E3D4C6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		E4F50617283940AB5C6D7E8F /* PendingFileQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingFileQueue.swift; sourceTree = "<group>"; };
-		F6071829A3B4C5D6E7F80192 /* UpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateChecker.swift; sourceTree = "<group>"; };
-		B2C3D4E5F6A7B8C9D0E1F2A3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		7B910DE080654ABDB620863E /* Credits.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,8 +69,8 @@
 			isa = PBXGroup;
 			children = (
 				8208E33A585D50C53487164C /* AppState.swift */,
-				C2B3D4E5F6071829A3B4C5D6 /* FocusedAppState.swift */,
-				E4F50617283940AB5C6D7E8F /* PendingFileQueue.swift */,
+				E3C77566CDA21AF7FBE7DE32 /* FocusedAppState.swift */,
+				B2F3E2C7F96E800DDC10264E /* PendingFileQueue.swift */,
 				5FDB43559100C510F37B02F9 /* TOCHeading.swift */,
 			);
 			path = Models;
@@ -81,14 +79,14 @@
 		03BDB8B3038B7C945F5C2657 /* LightMD */ = {
 			isa = PBXGroup;
 			children = (
-				B2C3D4E5F6A7B8C9D0E1F2A3 /* Assets.xcassets */,
+				A985C6DC6367AEC47A514AAE /* Assets.xcassets */,
+				B1D948FF5EB7CCEE5ABD6AB8 /* Credits.rtf */,
 				468E2C85C0A5B58896A24616 /* Info.plist */,
-				7B910DE080654ABDB620863E /* Credits.rtf */,
 				B296F5C9447B87A0C7AC9BE5 /* App */,
 				536FD9C24876C4A2585A4C27 /* FileWatcher */,
 				01FCAABFEA7B5B754E94E34D /* Models */,
 				4DE31FF20E39DE77984FD2D8 /* Rendering */,
-				071829A3B4C5D6E7F8019203 /* Services */,
+				CDEBB429495F625EE5FA64FB /* Services */,
 				26ED9B301D229508818359D0 /* Theme */,
 			);
 			path = LightMD;
@@ -131,24 +129,23 @@
 			path = FileWatcher;
 			sourceTree = "<group>";
 		};
-		071829A3B4C5D6E7F8019203 /* Services */ = {
-			isa = PBXGroup;
-			children = (
-				F6071829A3B4C5D6E7F80192 /* UpdateChecker.swift */,
-			);
-			path = Services;
-			sourceTree = "<group>";
-		};
 		B296F5C9447B87A0C7AC9BE5 /* App */ = {
 			isa = PBXGroup;
 			children = (
-				F2E3D4C5B6A70819F2E3D4C6 /* AppDelegate.swift */,
+				6235DEAF6B1917DB55814B66 /* AppDelegate.swift */,
 				594B055503787632B7BF4941 /* ContentView.swift */,
-				EBD329E02185772CE9BD6B43 /* DropOverlay.swift */,
 				F1DD24C0E2274387B96982EA /* LightMDApp.swift */,
 				324D6E36CD52C5E98BBD4891 /* TOCSidebar.swift */,
 			);
 			path = App;
+			sourceTree = "<group>";
+		};
+		CDEBB429495F625EE5FA64FB /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				394ED5C3C7956155D2D65B36 /* UpdateChecker.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 		F999B75C52F510D9723C09BD = {
@@ -161,26 +158,14 @@
 		};
 /* End PBXGroup section */
 
-/* Begin PBXResourcesBuildPhase section */
-		C3D4E5F6A7B8C9D0E1F2A3B4 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				A1B2C3D4E5F6A7B8C9D0E1F2 /* Assets.xcassets in Resources */,
-				D8A821D2FD8A496D856CD2D9 /* Credits.rtf in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
-
 /* Begin PBXNativeTarget section */
 		FB0FB79843404D72C71D26D7 /* LightMD */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = ED9A18A6DF264D6CF3B3B89B /* Build configuration list for PBXNativeTarget "LightMD" */;
 			buildPhases = (
 				E7C673577C445A2605B444D9 /* Sources */,
+				E33C1F63181A9FFBF4E9AE57 /* Resources */,
 				14834CB9AEFC2860CED84F86 /* Frameworks */,
-				C3D4E5F6A7B8C9D0E1F2A3B4 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -227,29 +212,40 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		E33C1F63181A9FFBF4E9AE57 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				55652093FF57DF881C40B1C6 /* Assets.xcassets in Resources */,
+				3A7FCCD1A20DD4C80A112AF3 /* Credits.rtf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		E7C673577C445A2605B444D9 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C4A3DAC9404941116977958C /* AppDelegate.swift in Sources */,
 				FD819EE5D092373EA1ECAC29 /* AppState.swift in Sources */,
 				2EF1E4CBF723673A5B8F1025 /* BuiltinThemes.swift in Sources */,
 				4EDEC5D37C10CADC237C84D7 /* ContentView.swift in Sources */,
-				A1BAFBD9653A0BAC15283367 /* DropOverlay.swift in Sources */,
 				A6444A83EEC72D7CEC424370 /* FileWatcher.swift in Sources */,
+				9E9BF1DFC0F775193D641A2F /* FocusedAppState.swift in Sources */,
 				36C088D7535D19516DB0B115 /* HTMLTemplateBuilder.swift in Sources */,
 				8925B6BD9AD4BFB4B17FEA2B /* LightMDApp.swift in Sources */,
 				578F7CA3EF191F28E1CF4665 /* MarkdownRenderer.swift in Sources */,
 				61348C0A6730DE00826A52C5 /* MarkdownWebView.swift in Sources */,
 				16E95E4414D74BAF6E14E8C3 /* PDFPaginator.swift in Sources */,
+				2940359DDB899050891DD29F /* PendingFileQueue.swift in Sources */,
 				DA325285FF6D8AD115E4B91B /* PreferencesView.swift in Sources */,
 				7B19D3EEE46195C6D07BB250 /* TOCHeading.swift in Sources */,
 				7968056229B59F7742A7B3AA /* TOCSidebar.swift in Sources */,
 				A74787D3C89743AAD5E2AA4F /* ThemeManager.swift in Sources */,
-				B1A2C3D4E5F60718293A4B5C /* FocusedAppState.swift in Sources */,
-				D3E4F5061728394A5B6C7D8E /* PendingFileQueue.swift in Sources */,
-				A3B4C5D6E7F80192A3B4C5D7 /* AppDelegate.swift in Sources */,
-				E5F60718293A4B5C6D7E8F01 /* UpdateChecker.swift in Sources */,
+				724194398257C2C8492735D9 /* UpdateChecker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -317,14 +313,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				INFOPLIST_FILE = LightMD/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.3.10;
+				MARKETING_VERSION = 1.4.11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lightmd.LightMD;
 				PRODUCT_NAME = LightMD;
 				SDKROOT = macosx;
@@ -400,14 +396,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				INFOPLIST_FILE = LightMD/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.3.10;
+				MARKETING_VERSION = 1.4.11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lightmd.LightMD;
 				PRODUCT_NAME = LightMD;
 				SDKROOT = macosx;
