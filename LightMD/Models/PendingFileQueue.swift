@@ -1,15 +1,21 @@
 import Foundation
-import Observation
+
+extension Notification.Name {
+    static let didEnqueuePendingFile = Notification.Name("LightMD.pendingFileQueue.enqueue")
+}
 
 @MainActor
-@Observable
 class PendingFileQueue {
     static let shared = PendingFileQueue()
 
-    private(set) var urls: [URL] = []
+    private var urls: [URL] = []
 
     func enqueue(_ url: URL) {
+        // Dedupe so onOpenURL + application(_:open:) firing for the same URL
+        // on cold launch doesn't cause the file to be opened twice.
+        guard !urls.contains(url) else { return }
         urls.append(url)
+        NotificationCenter.default.post(name: .didEnqueuePendingFile, object: nil)
     }
 
     func dequeue() -> URL? {

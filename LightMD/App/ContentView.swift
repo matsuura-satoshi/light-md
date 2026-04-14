@@ -102,7 +102,7 @@ struct ContentView: View {
         .onAppear {
             drainPendingFiles()
         }
-        .onChange(of: PendingFileQueue.shared.urls.count) { _, _ in
+        .onReceive(NotificationCenter.default.publisher(for: .didEnqueuePendingFile)) { _ in
             drainPendingFiles()
         }
         .onChange(of: appState.themeManager.preferences.selectedTheme) { _, _ in
@@ -123,6 +123,10 @@ struct ContentView: View {
     }
 
     private func drainPendingFiles() {
+        // Only the empty window claims a pending URL. Windows already
+        // showing a file leave the queue alone so a new window/tab spawned
+        // for the next double-click can pick it up via its own onAppear.
+        guard appState.currentFileURL == nil else { return }
         if let pending = PendingFileQueue.shared.dequeue() {
             appState.openFile(pending)
         }
