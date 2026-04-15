@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D1CE7E1E5A4BFE9C8F1A2001 /* warm-light.css in Resources */ = {isa = PBXBuildFile; fileRef = E2DF8F2F6B5CFD0D9F2B3001 /* warm-light.css */; };
+		D1CE7E1E5A4BFE9C8F1A2002 /* warm-dark.css in Resources */ = {isa = PBXBuildFile; fileRef = E2DF8F2F6B5CFD0D9F2B3002 /* warm-dark.css */; };
+		D1CE7E1E5A4BFE9C8F1A2003 /* classic-light.css in Resources */ = {isa = PBXBuildFile; fileRef = E2DF8F2F6B5CFD0D9F2B3003 /* classic-light.css */; };
 		16E95E4414D74BAF6E14E8C3 /* PDFPaginator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1508B89D9FAA5E649E727E9D /* PDFPaginator.swift */; };
 		20FCB2C2E5035241C541CB2D /* cmark in Frameworks */ = {isa = PBXBuildFile; productRef = D2C11EEC2EFE8E342A6787E6 /* cmark */; };
 		2940359DDB899050891DD29F /* PendingFileQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2F3E2C7F96E800DDC10264E /* PendingFileQueue.swift */; };
@@ -23,6 +26,7 @@
 		8925B6BD9AD4BFB4B17FEA2B /* LightMDApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DD24C0E2274387B96982EA /* LightMDApp.swift */; };
 		9E9BF1DFC0F775193D641A2F /* FocusedAppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C77566CDA21AF7FBE7DE32 /* FocusedAppState.swift */; };
 		A6444A83EEC72D7CEC424370 /* FileWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = F090467C6FE64C8BEBA4A0A4 /* FileWatcher.swift */; };
+		D1CE7E1E5A4BFE9C8F1A3001 /* ThemesWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DF8F2F6B5CFD0D9F2B4001 /* ThemesWatcher.swift */; };
 		A74787D3C89743AAD5E2AA4F /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A732E68551220293B5EFF2 /* ThemeManager.swift */; };
 		C4A3DAC9404941116977958C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6235DEAF6B1917DB55814B66 /* AppDelegate.swift */; };
 		DA325285FF6D8AD115E4B91B /* PreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DA8215313563D6DA7570038 /* PreferencesView.swift */; };
@@ -30,6 +34,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E2DF8F2F6B5CFD0D9F2B3001 /* warm-light.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = "warm-light.css"; sourceTree = "<group>"; };
+		E2DF8F2F6B5CFD0D9F2B3002 /* warm-dark.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = "warm-dark.css"; sourceTree = "<group>"; };
+		E2DF8F2F6B5CFD0D9F2B3003 /* classic-light.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = "classic-light.css"; sourceTree = "<group>"; };
 		003D232267D47DE6E81FFC93 /* HTMLTemplateBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLTemplateBuilder.swift; sourceTree = "<group>"; };
 		11FF58FDB20DB4FEFDF88270 /* MarkdownWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownWebView.swift; sourceTree = "<group>"; };
 		1508B89D9FAA5E649E727E9D /* PDFPaginator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFPaginator.swift; sourceTree = "<group>"; };
@@ -50,6 +57,7 @@
 		C0A732E68551220293B5EFF2 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
 		E3C77566CDA21AF7FBE7DE32 /* FocusedAppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusedAppState.swift; sourceTree = "<group>"; };
 		F090467C6FE64C8BEBA4A0A4 /* FileWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileWatcher.swift; sourceTree = "<group>"; };
+		E2DF8F2F6B5CFD0D9F2B4001 /* ThemesWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemesWatcher.swift; sourceTree = "<group>"; };
 		F1DD24C0E2274387B96982EA /* LightMDApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightMDApp.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -86,10 +94,29 @@
 				536FD9C24876C4A2585A4C27 /* FileWatcher */,
 				01FCAABFEA7B5B754E94E34D /* Models */,
 				4DE31FF20E39DE77984FD2D8 /* Rendering */,
+				F3E0A0A0C6D0AE1EAF3C4001 /* Resources */,
 				CDEBB429495F625EE5FA64FB /* Services */,
 				26ED9B301D229508818359D0 /* Theme */,
 			);
 			path = LightMD;
+			sourceTree = "<group>";
+		};
+		F3E0A0A0C6D0AE1EAF3C4001 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				F3E0A0A0C6D0AE1EAF3C4002 /* themes */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		F3E0A0A0C6D0AE1EAF3C4002 /* themes */ = {
+			isa = PBXGroup;
+			children = (
+				E2DF8F2F6B5CFD0D9F2B3003 /* classic-light.css */,
+				E2DF8F2F6B5CFD0D9F2B3002 /* warm-dark.css */,
+				E2DF8F2F6B5CFD0D9F2B3001 /* warm-light.css */,
+			);
+			path = themes;
 			sourceTree = "<group>";
 		};
 		2188239C55A288B4BE6A41F8 /* Products */ = {
@@ -125,6 +152,7 @@
 			isa = PBXGroup;
 			children = (
 				F090467C6FE64C8BEBA4A0A4 /* FileWatcher.swift */,
+				E2DF8F2F6B5CFD0D9F2B4001 /* ThemesWatcher.swift */,
 			);
 			path = FileWatcher;
 			sourceTree = "<group>";
@@ -219,6 +247,9 @@
 			files = (
 				55652093FF57DF881C40B1C6 /* Assets.xcassets in Resources */,
 				3A7FCCD1A20DD4C80A112AF3 /* Credits.rtf in Resources */,
+				D1CE7E1E5A4BFE9C8F1A2001 /* warm-light.css in Resources */,
+				D1CE7E1E5A4BFE9C8F1A2002 /* warm-dark.css in Resources */,
+				D1CE7E1E5A4BFE9C8F1A2003 /* classic-light.css in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -234,6 +265,7 @@
 				2EF1E4CBF723673A5B8F1025 /* BuiltinThemes.swift in Sources */,
 				4EDEC5D37C10CADC237C84D7 /* ContentView.swift in Sources */,
 				A6444A83EEC72D7CEC424370 /* FileWatcher.swift in Sources */,
+				D1CE7E1E5A4BFE9C8F1A3001 /* ThemesWatcher.swift in Sources */,
 				9E9BF1DFC0F775193D641A2F /* FocusedAppState.swift in Sources */,
 				36C088D7535D19516DB0B115 /* HTMLTemplateBuilder.swift in Sources */,
 				8925B6BD9AD4BFB4B17FEA2B /* LightMDApp.swift in Sources */,
@@ -320,7 +352,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.4.12;
+				MARKETING_VERSION = 1.5.13;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lightmd.LightMD;
 				PRODUCT_NAME = LightMD;
 				SDKROOT = macosx;
@@ -403,7 +435,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.4.12;
+				MARKETING_VERSION = 1.5.13;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lightmd.LightMD;
 				PRODUCT_NAME = LightMD;
 				SDKROOT = macosx;

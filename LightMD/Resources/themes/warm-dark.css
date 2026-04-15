@@ -39,6 +39,7 @@ body {
     padding: 48px 32px;
 }
 
+/* Headings */
 h1, h2, h3, h4, h5, h6 {
     color: var(--text-primary);
     font-weight: 600;
@@ -67,42 +68,70 @@ h4 { font-size: 1.1em; }
 h5 { font-size: 1em; }
 h6 { font-size: 0.9em; color: var(--text-tertiary); }
 
-p { margin-bottom: 1.2em; }
+/* Paragraphs */
+p {
+    margin-bottom: 1.2em;
+}
 
+/* Strong & Emphasis */
 strong { color: var(--text-primary); font-weight: 600; }
+em { font-style: italic; }
 
+/* Links */
 a {
     color: var(--link);
     text-decoration: underline;
     text-underline-offset: 2px;
 }
 
-a:hover { color: var(--accent); }
+a:hover {
+    color: var(--accent);
+}
 
+/* Lists */
 ul, ol {
     padding-left: 1.5em;
     margin-bottom: 1.2em;
 }
 
-li { margin-bottom: 0.3em; }
-li > p { margin-bottom: 0.5em; }
+li {
+    margin-bottom: 0.3em;
+}
 
-ul.contains-task-list {
+li > p {
+    margin-bottom: 0.5em;
+}
+
+/* Task lists — checkbox only, no bullet */
+ul.contains-task-list,
+ul:has(> li > input[type="checkbox"]) {
     list-style: none;
     padding-left: 0;
 }
 
-li.task-list-item {
+li.task-list-item,
+li:has(> input[type="checkbox"]) {
     display: flex;
     align-items: flex-start;
     gap: 0.5em;
+    list-style: none;
 }
 
-li.task-list-item input[type="checkbox"] {
+li.task-list-item input[type="checkbox"],
+li > input[type="checkbox"] {
     margin-top: 0.35em;
+    width: 16px;
+    height: 16px;
     accent-color: var(--accent);
+    flex-shrink: 0;
 }
 
+/* Checked checkbox: green checkmark */
+li > input[type="checkbox"]:checked {
+    accent-color: #34a853;
+}
+
+/* Code - inline */
 code {
     background: var(--bg-code);
     padding: 0.15em 0.4em;
@@ -112,6 +141,7 @@ code {
     color: var(--code-text);
 }
 
+/* Code - block */
 pre {
     background: var(--bg-code);
     border: 1px solid var(--bg-code-border);
@@ -120,6 +150,42 @@ pre {
     margin-bottom: 1.5em;
     overflow-x: auto;
     line-height: 1.6;
+    position: relative;
+}
+
+/* Copy button */
+.copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: var(--bg-primary);
+    border: 1px solid var(--bg-code-border);
+    border-radius: 4px;
+    padding: 4px 6px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    font-size: 13px;
+    line-height: 1;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+pre:hover .copy-btn,
+blockquote:hover > .copy-btn {
+    opacity: 1;
+}
+
+.copy-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.copy-btn.copied {
+    color: #3d8b5f;
+    border-color: #3d8b5f;
 }
 
 pre code {
@@ -130,12 +196,14 @@ pre code {
     color: var(--text-secondary);
 }
 
+/* Blockquote */
 blockquote {
     border-left: 3px solid var(--accent);
     padding: 12px 20px;
     margin: 1.5em 0;
     background: var(--bg-secondary);
     border-radius: 0 6px 6px 0;
+    position: relative;
 }
 
 blockquote p {
@@ -143,8 +211,11 @@ blockquote p {
     margin-bottom: 0.5em;
 }
 
-blockquote p:last-child { margin-bottom: 0; }
+blockquote p:last-child {
+    margin-bottom: 0;
+}
 
+/* Horizontal rule */
 hr {
     border: none;
     height: 1px;
@@ -152,6 +223,7 @@ hr {
     margin: 2em 0;
 }
 
+/* Tables */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -159,7 +231,9 @@ table {
     font-size: 0.94em;
 }
 
-thead tr { border-bottom: 2px solid var(--accent); }
+thead tr {
+    border-bottom: 2px solid var(--accent);
+}
 
 th {
     text-align: left;
@@ -176,8 +250,11 @@ td {
     border-bottom: 1px solid var(--bg-code-border);
 }
 
-tbody tr:nth-child(even) { background: var(--bg-table-alt); }
+tbody tr:nth-child(even) {
+    background: var(--bg-table-alt);
+}
 
+/* Images */
 img {
     max-width: 100%;
     height: auto;
@@ -185,6 +262,36 @@ img {
     margin: 1em 0;
 }
 
-del { color: var(--text-muted); text-decoration: line-through; }
+/* Strikethrough */
+del {
+    color: var(--text-muted);
+    text-decoration: line-through;
+}
 
-::selection { background: rgba(201, 169, 110, 0.3); }
+/* Selection */
+::selection {
+    background: rgba(201, 169, 110, 0.25);
+}
+
+/* Print / PDF export */
+@media print {
+    body {
+        background: white !important;
+        color: #2c2825 !important;
+    }
+    #content {
+        max-width: 100% !important;
+        padding: 16px 0 !important;
+        margin: 0 !important;
+    }
+    .copy-btn {
+        display: none !important;
+    }
+    pre {
+        white-space: pre-wrap !important;
+        word-wrap: break-word !important;
+    }
+    table {
+        font-size: 0.85em !important;
+    }
+}

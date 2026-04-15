@@ -3,7 +3,7 @@ import Foundation
 enum HTMLTemplateBuilder {
 
     static func build(body: String, themeCSS: String? = nil, fontOverrideCSS: String? = nil) -> String {
-        let css = themeCSS ?? BuiltinThemes.warmLight
+        let css = themeCSS ?? BuiltinThemes.css(for: "warm-light")
         let fontCSS = fontOverrideCSS ?? ""
         return """
         <!DOCTYPE html>
