@@ -92,13 +92,6 @@ struct LightMDApp: App {
                 .keyboardShortcut("e")
                 .disabled(focusedAppState?.renderedHTML.isEmpty ?? true)
             }
-            CommandGroup(replacing: .printItem) {
-                Button("Export as PDF...") {
-                    focusedAppState?.requestExport()
-                }
-                .keyboardShortcut("p")
-                .disabled(focusedAppState?.renderedHTML.isEmpty ?? true)
-            }
             CommandGroup(after: .sidebar) {
                 Button("Toggle Table of Contents") {
                     focusedAppState?.isTOCVisible.toggle()

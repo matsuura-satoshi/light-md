@@ -91,7 +91,7 @@ struct PreferencesView: View {
                             get: { Double(themeManager.preferences.fontSize) },
                             set: { themeManager.preferences.fontSize = Int($0) }
                         ),
-                        in: 12...24,
+                        in: Double(AppState.fontSizeMin)...Double(AppState.fontSizeMax),
                         step: 1
                     )
                 }
