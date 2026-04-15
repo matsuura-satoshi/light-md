@@ -20,6 +20,8 @@ struct ContentView: View {
             if !appState.renderedHTML.isEmpty {
                 MarkdownWebView(
                     htmlContent: appState.renderedHTML,
+                    themeCSS: appState.themeCSS,
+                    fontOverrideCSS: appState.fontOverrideCSS,
                     zoomLevel: appState.zoomLevel,
                     scrollTarget: appState.scrollTarget,
                     exportTrigger: appState.exportTrigger,
@@ -106,18 +108,19 @@ struct ContentView: View {
             drainPendingFiles()
         }
         .onChange(of: appState.themeManager.preferences.selectedTheme) { _, _ in
+            appState.bindActiveThemeWatcher()
             if !appState.markdownContent.isEmpty {
-                appState.rebuildHTML()
+                appState.refreshCSSOnly()
             }
         }
         .onChange(of: appState.themeManager.preferences.fontFamily) { _, _ in
             if !appState.markdownContent.isEmpty {
-                appState.rebuildHTML()
+                appState.refreshCSSOnly()
             }
         }
         .onChange(of: appState.themeManager.preferences.fontSize) { _, _ in
             if !appState.markdownContent.isEmpty {
-                appState.rebuildHTML()
+                appState.refreshCSSOnly()
             }
         }
     }

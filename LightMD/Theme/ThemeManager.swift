@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import Observation
+import AppKit
 
 struct ThemeInfo: Identifiable, Codable {
     var id: String { name }
@@ -15,12 +16,32 @@ struct UserPreferences: Codable {
     var fontSize: Int = 16
 }
 
+enum ThemeError: LocalizedError {
+    case invalidName(String)
+    case nameAlreadyExists(String)
+    case sourceMissing(String)
+    case writeFailed(underlying: Error)
+
+    var errorDescription: String? {
+        switch self {
+        case .invalidName(let n): return "Invalid theme name: \"\(n)\". Use letters, digits, spaces, hyphens or underscores."
+        case .nameAlreadyExists(let n): return "A theme named \"\(n)\" already exists."
+        case .sourceMissing(let n): return "Source theme \"\(n)\" could not be read."
+        case .writeFailed(let err): return "Failed to write theme: \(err.localizedDescription)"
+        }
+    }
+}
+
 @MainActor
 @Observable
 class ThemeManager {
     static let shared = ThemeManager()
 
     var preferences = UserPreferences()
+
+    /// Bumped whenever the themes directory contents change on disk.
+    /// `availableThemes` reads this so SwiftUI re-renders Pickers bound to it.
+    private var themesFolderVersion: Int = 0
 
     private let appSupportDir: URL = {
         let dir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
@@ -34,6 +55,8 @@ class ThemeManager {
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         return dir
     }
+
+    var themesDirectory: URL { themesDir }
 
     private var preferencesFile: URL {
         appSupportDir.appendingPathComponent("preferences.json")
@@ -57,16 +80,14 @@ class ThemeManager {
     // MARK: - Current CSS
 
     var currentCSS: String {
-        let builtins = ["warm-light", "warm-dark", "classic-light"]
-        if builtins.contains(preferences.selectedTheme) {
+        if BuiltinThemes.names.contains(preferences.selectedTheme) {
             return BuiltinThemes.css(for: preferences.selectedTheme)
         }
-        // Try loading custom theme
         let file = themesDir.appendingPathComponent("\(preferences.selectedTheme).css")
         if let css = try? String(contentsOf: file, encoding: .utf8) {
             return css
         }
-        return BuiltinThemes.warmLight
+        return BuiltinThemes.css(for: "warm-light")
     }
 
     var fontOverrideCSS: String {
@@ -83,29 +104,49 @@ class ThemeManager {
     // MARK: - Theme listing
 
     var availableThemes: [ThemeInfo] {
-        var themes = [
-            ThemeInfo(name: "warm-light", displayName: "Warm Light", isBuiltin: true),
-            ThemeInfo(name: "warm-dark", displayName: "Warm Dark", isBuiltin: true),
-            ThemeInfo(name: "classic-light", displayName: "Classic Light", isBuiltin: true),
-        ]
+        _ = themesFolderVersion  // establish dependency for SwiftUI observation
+        var themes = BuiltinThemes.names.map { name in
+            ThemeInfo(name: name, displayName: BuiltinThemes.displayName(for: name), isBuiltin: true)
+        }
 
         if let files = try? FileManager.default.contentsOfDirectory(at: themesDir, includingPropertiesForKeys: nil) {
-            for file in files where file.pathExtension == "css" {
-                let name = file.deletingPathExtension().lastPathComponent
-                if !themes.contains(where: { $0.name == name }) {
-                    themes.append(ThemeInfo(name: name, displayName: name, isBuiltin: false))
-                }
+            let customs = files
+                .filter { $0.pathExtension == "css" }
+                .map { $0.deletingPathExtension().lastPathComponent }
+                .filter { name in !themes.contains(where: { $0.name == name }) }
+                .sorted()
+            for name in customs {
+                themes.append(ThemeInfo(name: name, displayName: name, isBuiltin: false))
             }
         }
 
         return themes
     }
 
-    // MARK: - Custom themes
+    /// Called by the themes watcher when the directory contents change.
+    func refreshAvailableThemes() {
+        themesFolderVersion &+= 1
+    }
+
+    // MARK: - File URLs
+
+    /// Returns the on-disk URL for a theme's .css file.
+    /// - builtin themes: bundle URL (read-only)
+    /// - custom themes: Application Support URL (writable)
+    func themeFileURL(for name: String) -> URL? {
+        if BuiltinThemes.names.contains(name) {
+            return BuiltinThemes.bundleURL(for: name)
+        }
+        let url = themesDir.appendingPathComponent("\(name).css")
+        return FileManager.default.fileExists(atPath: url.path) ? url : nil
+    }
+
+    // MARK: - Custom theme CRUD
 
     func saveCustomTheme(name: String, css: String) {
         let file = themesDir.appendingPathComponent("\(name).css")
         try? css.write(to: file, atomically: true, encoding: .utf8)
+        refreshAvailableThemes()
     }
 
     func deleteCustomTheme(name: String) {
@@ -115,6 +156,88 @@ class ThemeManager {
             preferences.selectedTheme = "warm-light"
             savePreferences()
         }
+        refreshAvailableThemes()
+    }
+
+    /// Duplicates a theme (builtin or custom) into a new custom theme file.
+    /// Throws `ThemeError` on validation or I/O failure.
+    @discardableResult
+    func duplicateTheme(from sourceName: String, to newName: String) throws -> String {
+        let validated = try validateThemeName(newName)
+        if availableThemes.contains(where: { $0.name == validated }) {
+            throw ThemeError.nameAlreadyExists(validated)
+        }
+
+        let sourceCSS: String
+        if BuiltinThemes.names.contains(sourceName) {
+            sourceCSS = BuiltinThemes.css(for: sourceName)
+        } else {
+            let sourceURL = themesDir.appendingPathComponent("\(sourceName).css")
+            guard let css = try? String(contentsOf: sourceURL, encoding: .utf8) else {
+                throw ThemeError.sourceMissing(sourceName)
+            }
+            sourceCSS = css
+        }
+
+        let destURL = themesDir.appendingPathComponent("\(validated).css")
+        do {
+            try sourceCSS.write(to: destURL, atomically: true, encoding: .utf8)
+        } catch {
+            throw ThemeError.writeFailed(underlying: error)
+        }
+        refreshAvailableThemes()
+        return validated
+    }
+
+    /// Generates a non-colliding "{base} Copy", "{base} Copy 2", … default name.
+    func suggestedDuplicateName(for sourceName: String) -> String {
+        let baseDisplay = BuiltinThemes.names.contains(sourceName)
+            ? BuiltinThemes.displayName(for: sourceName)
+            : sourceName
+        let base = "\(baseDisplay) Copy"
+        let existing = Set(availableThemes.map(\.name))
+        if !existing.contains(base) { return base }
+        for i in 2...999 {
+            let candidate = "\(base) \(i)"
+            if !existing.contains(candidate) { return candidate }
+        }
+        return base
+    }
+
+    private func validateThemeName(_ raw: String) throws -> String {
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { throw ThemeError.invalidName(raw) }
+        let allowed = CharacterSet.alphanumerics
+            .union(.whitespaces)
+            .union(CharacterSet(charactersIn: "-_"))
+        if trimmed.unicodeScalars.contains(where: { !allowed.contains($0) }) {
+            throw ThemeError.invalidName(raw)
+        }
+        return trimmed
+    }
+
+    // MARK: - NSWorkspace integration
+
+    func openThemeInEditor(_ name: String) {
+        guard let url = themeFileURL(for: name) else { return }
+        // Builtin CSS inside the app bundle is read-only; opening it in an editor
+        // would let the user save changes to an ephemeral location that disappears
+        // on next install. For builtins we reveal in Finder instead to make the
+        // "clone first, then edit" flow obvious.
+        if BuiltinThemes.names.contains(name) {
+            NSWorkspace.shared.activateFileViewerSelecting([url])
+            return
+        }
+        NSWorkspace.shared.open(url)
+    }
+
+    func revealThemeInFinder(_ name: String) {
+        guard let url = themeFileURL(for: name) else { return }
+        NSWorkspace.shared.activateFileViewerSelecting([url])
+    }
+
+    func openThemesFolder() {
+        NSWorkspace.shared.open(themesDir)
     }
 
     // MARK: - Persistence

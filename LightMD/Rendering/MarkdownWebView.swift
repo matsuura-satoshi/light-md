@@ -3,6 +3,8 @@ import WebKit
 
 struct MarkdownWebView: NSViewRepresentable {
     let htmlContent: String
+    let themeCSS: String
+    let fontOverrideCSS: String
     let zoomLevel: Double
     var scrollTarget: String?
     var exportTrigger: UUID?
@@ -62,20 +64,66 @@ struct MarkdownWebView: NSViewRepresentable {
             coordinator.exportPDF()
         }
 
-        // HTML content
-        guard htmlContent != coordinator.lastHTML else { return }
-        coordinator.lastHTML = htmlContent
-
-        webView.evaluateJavaScript("window.scrollY") { result, _ in
-            coordinator.savedScrollY = result as? Double ?? 0
-            webView.loadHTMLString(htmlContent, baseURL: nil)
+        // HTML body changed → full reload (theme CSS bundled into the document)
+        if htmlContent != coordinator.lastHTML {
+            coordinator.lastHTML = htmlContent
+            coordinator.lastThemeCSS = themeCSS
+            coordinator.lastFontOverrideCSS = fontOverrideCSS
+            webView.evaluateJavaScript("window.scrollY") { result, _ in
+                coordinator.savedScrollY = result as? Double ?? 0
+                webView.loadHTMLString(htmlContent, baseURL: nil)
+            }
+            return
         }
+
+        // Body unchanged, only CSS changed → hot-swap in place via JS.
+        // Avoids a navigation event, so scroll position and TOC observer
+        // are preserved with no flicker.
+        if themeCSS != coordinator.lastThemeCSS {
+            coordinator.lastThemeCSS = themeCSS
+            webView.evaluateJavaScript(Self.cssSwapJS(styleID: "theme-css", css: themeCSS))
+        }
+        if fontOverrideCSS != coordinator.lastFontOverrideCSS {
+            coordinator.lastFontOverrideCSS = fontOverrideCSS
+            webView.evaluateJavaScript(Self.cssSwapJS(styleID: "font-override", css: fontOverrideCSS))
+        }
+    }
+
+    /// Builds a JS snippet that replaces the text content of a `<style>` tag
+    /// in-place. Uses JSONSerialization to safely encode the CSS as a JS string
+    /// literal — handles backslashes, quotes, newlines, and non-ASCII correctly.
+    static func cssSwapJS(styleID: String, css: String) -> String {
+        let jsLiteral = jsStringLiteral(css)
+        // Fall back to creating a fresh <style> element if the target is missing
+        // (e.g. after a body rebuild that hasn't finished loading yet).
+        return """
+        (function() {
+            var el = document.getElementById('\(styleID)');
+            if (!el) {
+                el = document.createElement('style');
+                el.id = '\(styleID)';
+                document.head.appendChild(el);
+            }
+            el.textContent = \(jsLiteral);
+        })();
+        """
+    }
+
+    private static func jsStringLiteral(_ value: String) -> String {
+        guard let data = try? JSONSerialization.data(withJSONObject: [value]),
+              let json = String(data: data, encoding: .utf8),
+              json.hasPrefix("["), json.hasSuffix("]") else {
+            return "\"\""
+        }
+        return String(json.dropFirst().dropLast())
     }
 
     class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
         weak var webView: WKWebView?
         var savedScrollY: Double = 0
         var lastHTML: String = ""
+        var lastThemeCSS: String = ""
+        var lastFontOverrideCSS: String = ""
         var lastScrollTarget: String?
         var lastExportTrigger: UUID?
         var onTOCExtracted: (([TOCHeading]) -> Void)?
