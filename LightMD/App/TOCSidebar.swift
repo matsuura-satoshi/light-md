@@ -3,6 +3,7 @@ import SwiftUI
 struct TOCSidebar: View {
     let headings: [TOCHeading]
     let activeID: String?
+    let accent: Color
     let onSelect: (String) -> Void
 
     var body: some View {
@@ -32,7 +33,7 @@ struct TOCSidebar: View {
                             } label: {
                                 Text(heading.text)
                                     .font(.system(size: 13))
-                                    .foregroundStyle(heading.id == activeID ? Color(hex: 0xc9a96e) : .secondary)
+                                    .foregroundStyle(heading.id == activeID ? accent : .secondary)
                                     .fontWeight(heading.id == activeID ? .medium : .regular)
                                     .lineLimit(2)
                                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -41,7 +42,7 @@ struct TOCSidebar: View {
                                     .padding(.leading, CGFloat((heading.level - 1) * 12))
                                     .background(
                                         heading.id == activeID
-                                            ? Color(hex: 0xc9a96e).opacity(0.08)
+                                            ? accent.opacity(0.08)
                                             : Color.clear
                                     )
                                     .clipShape(RoundedRectangle(cornerRadius: 4))

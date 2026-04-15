@@ -7,6 +7,7 @@ struct ContentView: View {
     @State private var tocHeadings: [TOCHeading] = []
     @State private var activeHeadingID: String?
     @State private var isDropTargeted = false
+    @State private var printShortcutMonitor: Any?
 
     var body: some View {
         ZStack(alignment: .trailing) {
@@ -20,9 +21,9 @@ struct ContentView: View {
             if !appState.renderedHTML.isEmpty {
                 MarkdownWebView(
                     htmlContent: appState.renderedHTML,
+                    bodyHTML: appState.bodyHTML,
                     themeCSS: appState.themeCSS,
                     fontOverrideCSS: appState.fontOverrideCSS,
-                    zoomLevel: appState.zoomLevel,
                     scrollTarget: appState.scrollTarget,
                     exportTrigger: appState.exportTrigger,
                     onTOCExtracted: { headings in
@@ -41,7 +42,8 @@ struct ContentView: View {
             if appState.isTOCVisible {
                 TOCSidebar(
                     headings: tocHeadings,
-                    activeID: activeHeadingID
+                    activeID: activeHeadingID,
+                    accent: appState.themeManager.accentColor
                 ) { id in
                     appState.scrollToHeading(id)
                 }
@@ -50,9 +52,10 @@ struct ContentView: View {
 
             // Drop highlight overlay
             if isDropTargeted {
+                let accent = appState.themeManager.accentColor
                 RoundedRectangle(cornerRadius: 8)
-                    .strokeBorder(Color(hex: 0xc9a96e), lineWidth: 3)
-                    .background(Color(hex: 0xc9a96e).opacity(0.08))
+                    .strokeBorder(accent, lineWidth: 3)
+                    .background(accent.opacity(0.08))
                     .padding(4)
                     .allowsHitTesting(false)
             }
@@ -82,27 +85,30 @@ struct ContentView: View {
         }
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                HStack(spacing: 4) {
-                    Button {
-                        appState.requestExport()
-                    } label: {
-                        Image(systemName: "square.and.arrow.up")
-                    }
-                    .help("Export as PDF")
-                    .disabled(appState.renderedHTML.isEmpty)
-
-                    Button {
-                        appState.isTOCVisible.toggle()
-                    } label: {
-                        Image(systemName: "list.bullet.rectangle")
-                    }
-                    .help("Toggle Table of Contents")
+                Button {
+                    appState.requestExport()
+                } label: {
+                    Image(systemName: "square.and.arrow.up")
                 }
+                .help("Export as PDF")
+                .disabled(appState.renderedHTML.isEmpty)
+            }
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    appState.isTOCVisible.toggle()
+                } label: {
+                    Image(systemName: "list.bullet.rectangle")
+                }
+                .help("Toggle Table of Contents")
             }
         }
         .focusedSceneValue(\.appState, appState)
         .onAppear {
             drainPendingFiles()
+            installPrintShortcutMonitor()
+        }
+        .onDisappear {
+            removePrintShortcutMonitor()
         }
         .onReceive(NotificationCenter.default.publisher(for: .didEnqueuePendingFile)) { _ in
             drainPendingFiles()
@@ -132,6 +138,31 @@ struct ContentView: View {
         guard appState.currentFileURL == nil else { return }
         if let pending = PendingFileQueue.shared.dequeue() {
             appState.openFile(pending)
+        }
+    }
+
+    // SwiftUI's CommandGroup(replacing: .printItem) with .keyboardShortcut("p")
+    // does not reliably install a Cmd+P key equivalent on macOS (same class of
+    // issue as the Cmd+T saga — see commits 2e5cece / 9989347 / 7108e3e). A
+    // local NSEvent monitor runs before WebKit and before the SwiftUI command
+    // chain, so it is the robust escape hatch.
+    private func installPrintShortcutMonitor() {
+        guard printShortcutMonitor == nil else { return }
+        let stateBox = appState
+        printShortcutMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+            guard event.modifierFlags.intersection(.deviceIndependentFlagsMask) == .command,
+                  event.charactersIgnoringModifiers == "p",
+                  !stateBox.renderedHTML.isEmpty
+            else { return event }
+            stateBox.requestExport()
+            return nil
+        }
+    }
+
+    private func removePrintShortcutMonitor() {
+        if let monitor = printShortcutMonitor {
+            NSEvent.removeMonitor(monitor)
+            printShortcutMonitor = nil
         }
     }
 }

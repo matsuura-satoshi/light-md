@@ -3,9 +3,9 @@ import WebKit
 
 struct MarkdownWebView: NSViewRepresentable {
     let htmlContent: String
+    let bodyHTML: String
     let themeCSS: String
     let fontOverrideCSS: String
-    let zoomLevel: Double
     var scrollTarget: String?
     var exportTrigger: UUID?
     var onTOCExtracted: (([TOCHeading]) -> Void)?
@@ -34,7 +34,6 @@ struct MarkdownWebView: NSViewRepresentable {
         webView.unregisterDraggedTypes()
         webView.navigationDelegate = context.coordinator
         context.coordinator.webView = webView
-        webView.pageZoom = zoomLevel
         return webView
     }
 
@@ -43,10 +42,12 @@ struct MarkdownWebView: NSViewRepresentable {
         coordinator.onTOCExtracted = onTOCExtracted
         coordinator.onActiveHeadingChanged = onActiveHeadingChanged
 
-        // Zoom
-        if webView.pageZoom != zoomLevel {
-            webView.pageZoom = zoomLevel
-        }
+        // Always-current snapshot for exportPDF. Kept separate from the
+        // last* diff anchors below so the export path never depends on
+        // hot-swap timing or DOM serialization.
+        coordinator.currentBodyHTML = bodyHTML
+        coordinator.currentThemeCSS = themeCSS
+        coordinator.currentFontOverrideCSS = fontOverrideCSS
 
         // Scroll to heading
         if let target = scrollTarget, target != coordinator.lastScrollTarget {
@@ -58,10 +59,15 @@ struct MarkdownWebView: NSViewRepresentable {
             }
         }
 
-        // Export PDF
+        // Export PDF — defer to the next runloop tick so NSSavePanel.runModal()
+        // does not run inside SwiftUI's view-update cycle. Running it inline
+        // silently fails to present the panel (observed for the toolbar icon
+        // and the Cmd+P NSEvent monitor paths).
         if let trigger = exportTrigger, trigger != coordinator.lastExportTrigger {
             coordinator.lastExportTrigger = trigger
-            coordinator.exportPDF()
+            DispatchQueue.main.async {
+                coordinator.exportPDF()
+            }
         }
 
         // HTML body changed → full reload (theme CSS bundled into the document)
@@ -126,6 +132,9 @@ struct MarkdownWebView: NSViewRepresentable {
         var lastFontOverrideCSS: String = ""
         var lastScrollTarget: String?
         var lastExportTrigger: UUID?
+        var currentBodyHTML: String = ""
+        var currentThemeCSS: String = ""
+        var currentFontOverrideCSS: String = ""
         var onTOCExtracted: (([TOCHeading]) -> Void)?
         var onActiveHeadingChanged: ((String) -> Void)?
 
@@ -138,7 +147,7 @@ struct MarkdownWebView: NSViewRepresentable {
         private var pdfSaveURL: URL?
 
         func exportPDF() {
-            guard let webView else { return }
+            guard webView != nil else { return }
 
             let panel = NSSavePanel()
             panel.allowedContentTypes = [.pdf]
@@ -147,10 +156,19 @@ struct MarkdownWebView: NSViewRepresentable {
 
             guard panel.runModal() == .OK, let saveURL = panel.url else { return }
 
-            webView.evaluateJavaScript("document.documentElement.outerHTML") { [weak self] result, _ in
-                guard let html = result as? String else { return }
-                self?.renderPDFOffscreen(html: html, saveURL: saveURL)
-            }
+            // Rebuild a fresh HTML document from the Swift-side state rather
+            // than extracting outerHTML from the live DOM. The live preview
+            // hot-swaps the <style id="font-override"> textContent on CSS-only
+            // updates, and round-tripping that through outerHTML has been
+            // observed to lose the current font size in the exported PDF.
+            // Copy buttons (JS-injected) are intentionally absent here — they
+            // are hidden in print anyway via @media print.
+            let html = HTMLTemplateBuilder.build(
+                body: currentBodyHTML,
+                themeCSS: currentThemeCSS,
+                fontOverrideCSS: currentFontOverrideCSS
+            )
+            renderPDFOffscreen(html: html, saveURL: saveURL)
         }
 
         private func renderPDFOffscreen(html: String, saveURL: URL) {

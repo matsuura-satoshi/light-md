@@ -77,6 +77,18 @@ class ThemeManager {
         }
     }
 
+    /// Theme-appropriate accent color, used for UI affordances like the
+    /// drop-target highlight and TOC active-row indicator. Kept in sync
+    /// with the --accent CSS variable of each built-in theme.
+    var accentColor: Color {
+        switch preferences.selectedTheme {
+        case "warm-light": return Color(hex: 0xc9a96e)
+        case "warm-dark": return Color(hex: 0xc9a96e)
+        case "classic-light": return Color(hex: 0x374151)
+        default: return Color(hex: 0xc9a96e)
+        }
+    }
+
     // MARK: - Current CSS
 
     var currentCSS: String {

@@ -26,9 +26,16 @@ class AppState {
     var fontOverrideCSS: String = ""
 
     var isTOCVisible = false
-    var zoomLevel: Double = 1.0
     var scrollTarget: String?
     var exportTrigger: UUID?
+
+    /// Body font size bounds shared between the Preferences slider and the
+    /// Cmd+(+/-) shortcut. Cmd+(+/-) mutates `preferences.fontSize` directly
+    /// so the live preview and the exported PDF always use the same size.
+    static let fontSizeMin: Int = 10
+    static let fontSizeMax: Int = 40
+    static let fontSizeDefault: Int = 16
+    static let fontSizeShortcutStep: Int = 2
 
     let themeManager = ThemeManager.shared
     private let renderer = MarkdownRenderer()
@@ -128,9 +135,26 @@ class AppState {
         }
     }
 
-    func zoomIn() { zoomLevel = min(zoomLevel + 0.1, 3.0) }
-    func zoomOut() { zoomLevel = max(zoomLevel - 0.1, 0.5) }
-    func zoomReset() { zoomLevel = 1.0 }
+    func zoomIn() {
+        let new = min(themeManager.preferences.fontSize + Self.fontSizeShortcutStep, Self.fontSizeMax)
+        guard new != themeManager.preferences.fontSize else { return }
+        themeManager.preferences.fontSize = new
+        themeManager.savePreferences()
+    }
+
+    func zoomOut() {
+        let new = max(themeManager.preferences.fontSize - Self.fontSizeShortcutStep, Self.fontSizeMin)
+        guard new != themeManager.preferences.fontSize else { return }
+        themeManager.preferences.fontSize = new
+        themeManager.savePreferences()
+    }
+
+    func zoomReset() {
+        guard themeManager.preferences.fontSize != Self.fontSizeDefault else { return }
+        themeManager.preferences.fontSize = Self.fontSizeDefault
+        themeManager.savePreferences()
+    }
+
     func requestExport() { exportTrigger = UUID() }
     func scrollToHeading(_ id: String) { scrollTarget = id }
 }
