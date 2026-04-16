@@ -11,6 +11,12 @@ struct ContentView: View {
 
     var body: some View {
         ZStack(alignment: .trailing) {
+            // Bridge to the hosting NSWindow: applies the persisted frame on
+            // appear and writes the current frame back on resize/move. Zero
+            // visual footprint.
+            WindowStateBinder()
+                .frame(width: 0, height: 0)
+
             // Theme background — always rendered underneath so that the
             // transparent WKWebView never exposes the NSWindow default
             // background during its async HTML load.

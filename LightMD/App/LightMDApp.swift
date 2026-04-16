@@ -5,7 +5,6 @@ struct LightMDApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @FocusedValue(\.appState) private var focusedAppState
     @StateObject private var updateChecker = UpdateChecker()
-    @AppStorage("lastUpdateCheck") private var lastUpdateCheck: Double = 0
 
     @State private var showUpdateAvailableAlert = false
     @State private var showNoUpdateAlert = false
@@ -131,7 +130,7 @@ struct LightMDApp: App {
     private func checkForUpdatesOnLaunch() {
         let now = Date().timeIntervalSince1970
         let oneDayInSeconds: Double = 24 * 60 * 60
-        guard now - lastUpdateCheck >= oneDayInSeconds else { return }
+        guard now - AppRuntimeState.shared.lastUpdateCheck >= oneDayInSeconds else { return }
 
         isManualCheck = false
         Task { await performUpdateCheck() }
@@ -139,7 +138,7 @@ struct LightMDApp: App {
 
     private func performUpdateCheck() async {
         await updateChecker.checkForUpdates()
-        lastUpdateCheck = Date().timeIntervalSince1970
+        AppRuntimeState.shared.lastUpdateCheck = Date().timeIntervalSince1970
 
         if updateChecker.updateAvailable {
             showUpdateAvailableAlert = true
