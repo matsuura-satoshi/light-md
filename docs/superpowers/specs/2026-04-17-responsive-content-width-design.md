@@ -59,6 +59,30 @@ Wide is the default because it matches the user's directional preference
 ("I want more text on wider windows") while staying at the upper end of
 Butterick's recommended 45–90ch band.
 
+### Update (2026-04-17, follow-up): fix / dynamic axis
+
+After shipping the four-preset set, the user pointed out that the fluid
+`Unlimited` behavior — where the margins themselves grow as a proportion
+of the window — was the part that made widening the window feel right.
+The `fix` presets hit their ch ceiling and then stop changing; the fluid
+preset kept responding. They asked for a second fluid preset with a
+slightly wider margin, and for a naming scheme that makes the two modes
+visible in the picker itself.
+
+Final preset matrix:
+
+| Preset                    | `--content-width`   | Mode    | Note                              |
+| ------------------------- | ------------------- | ------- | --------------------------------- |
+| Comfortable (fix, 65ch)   | `min(65ch, 92vw)`   | fix     | iA-Writer-ish                     |
+| Wide (fix, 75ch)          | `min(75ch, 92vw)`   | fix     | default                           |
+| Extra Wide (fix, 90ch)    | `min(90ch, 92vw)`   | fix     | tables / code-heavy in fixed mode |
+| Wide (dynamic, 85vw)      | `85vw`              | dynamic | fluid, ~7.5% margin each side    |
+| Extra Wide (dynamic, 95vw)| `95vw`              | dynamic | fluid, ~2.5% margin — was `unlimited`, widened slightly to emphasize the mode difference |
+
+The `unlimited` raw value from v1.5.16 preferences.json is remapped to
+`.extraWideDynamic` in `UserPreferences.init(from:)`. Next save
+overwrites the legacy string with the new case name.
+
 ### Plumbing
 
 - `UserPreferences` gets a `contentWidth: ContentWidthPreset` field.

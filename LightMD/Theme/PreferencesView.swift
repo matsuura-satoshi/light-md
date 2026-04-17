@@ -106,7 +106,7 @@ struct PreferencesView: View {
                         Text(preset.displayName).tag(preset)
                     }
                 }
-                Text("Content scales with window width up to the chosen maximum. Unlimited fills the window — useful for tables and wide code blocks.")
+                Text("Fix variants cap the measure at a character count (65 / 75 / 90ch), so widening the window adds margin once the cap is reached. Dynamic variants keep a viewport proportion (85 / 95vw), so measure and margins grow together.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
