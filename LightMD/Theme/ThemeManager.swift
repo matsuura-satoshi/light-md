@@ -11,17 +11,24 @@ struct ThemeInfo: Identifiable, Codable {
 }
 
 enum ContentWidthPreset: String, Codable, CaseIterable {
+    /// "fix" variants cap the measure at a character count — the column stops
+    /// growing once the cap is reached and the excess window becomes margin.
     case comfortable
     case wide
     case extraWide
-    case unlimited
+    /// "dynamic" variants keep a fixed viewport proportion — the measure and
+    /// the margins both grow with the window, in contrast to the fix variants
+    /// which stop at a ch ceiling.
+    case wideDynamic
+    case extraWideDynamic
 
     var displayName: String {
         switch self {
-        case .comfortable: return "Comfortable (65ch)"
-        case .wide:        return "Wide (75ch)"
-        case .extraWide:   return "Extra Wide (90ch)"
-        case .unlimited:   return "Unlimited"
+        case .comfortable:      return "Comfortable (fix, 65ch)"
+        case .wide:             return "Wide (fix, 75ch)"
+        case .extraWide:        return "Extra Wide (fix, 90ch)"
+        case .wideDynamic:      return "Wide (dynamic, 85vw)"
+        case .extraWideDynamic: return "Extra Wide (dynamic, 95vw)"
         }
     }
 
@@ -29,10 +36,11 @@ enum ContentWidthPreset: String, Codable, CaseIterable {
     /// font-override hot-swap so width changes apply without a full reload.
     var cssValue: String {
         switch self {
-        case .comfortable: return "min(65ch, 92vw)"
-        case .wide:        return "min(75ch, 92vw)"
-        case .extraWide:   return "min(90ch, 92vw)"
-        case .unlimited:   return "92vw"
+        case .comfortable:      return "min(65ch, 92vw)"
+        case .wide:             return "min(75ch, 92vw)"
+        case .extraWide:        return "min(90ch, 92vw)"
+        case .wideDynamic:      return "85vw"
+        case .extraWideDynamic: return "95vw"
         }
     }
 }
@@ -53,14 +61,29 @@ struct UserPreferences: Codable {
     }
 
     // Tolerant decoding so preferences.json files written by earlier versions
-    // (which lack newer keys like `contentWidth`) still load cleanly instead
-    // of wiping the user's theme/font choices back to defaults.
+    // (which lack newer keys like `contentWidth`, or carry retired raw values
+    // like "unlimited") still load cleanly instead of wiping the user's
+    // theme/font choices back to defaults.
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         self.selectedTheme = try c.decodeIfPresent(String.self, forKey: .selectedTheme) ?? "warm-light"
         self.fontFamily    = try c.decodeIfPresent(String.self, forKey: .fontFamily) ?? "system-sans"
         self.fontSize      = try c.decodeIfPresent(Int.self,    forKey: .fontSize) ?? 16
-        self.contentWidth  = try c.decodeIfPresent(ContentWidthPreset.self, forKey: .contentWidth) ?? .wide
+
+        // Decode contentWidth via its raw string so legacy values ("unlimited"
+        // from v1.5.x → v1.6.x) can be remapped to the current case set
+        // without failing the whole decode.
+        if let raw = try c.decodeIfPresent(String.self, forKey: .contentWidth) {
+            if let preset = ContentWidthPreset(rawValue: raw) {
+                self.contentWidth = preset
+            } else if raw == "unlimited" {
+                self.contentWidth = .extraWideDynamic
+            } else {
+                self.contentWidth = .wide
+            }
+        } else {
+            self.contentWidth = .wide
+        }
     }
 }
 
