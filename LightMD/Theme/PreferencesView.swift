@@ -23,6 +23,9 @@ struct PreferencesView: View {
         .onChange(of: themeManager.preferences.fontSize) { _, _ in
             themeManager.savePreferences()
         }
+        .onChange(of: themeManager.preferences.contentWidth) { _, _ in
+            themeManager.savePreferences()
+        }
         .alert("Duplicate Theme", isPresented: duplicateBinding, presenting: duplicateSource) { source in
             TextField("Name", text: $duplicateName)
             Button("Cancel", role: .cancel) { duplicateSource = nil }
@@ -95,6 +98,17 @@ struct PreferencesView: View {
                         step: 1
                     )
                 }
+            }
+
+            Section("Layout") {
+                Picker("Content Width", selection: Bindable(themeManager).preferences.contentWidth) {
+                    ForEach(ContentWidthPreset.allCases, id: \.self) { preset in
+                        Text(preset.displayName).tag(preset)
+                    }
+                }
+                Text("Content scales with window width up to the chosen maximum. Unlimited fills the window — useful for tables and wide code blocks.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
         }
         .formStyle(.grouped)

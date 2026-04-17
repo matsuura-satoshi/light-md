@@ -15,7 +15,7 @@
     --font-code: "SF Mono", Menlo, monospace;
     --font-size: 16px;
     --line-height: 1.85;
-    --content-width: 720px;
+    --content-width: min(75ch, 92vw);
 }
 
 * {
@@ -36,7 +36,7 @@ body {
 #content {
     max-width: var(--content-width);
     margin: 0 auto;
-    padding: 48px 32px;
+    padding: 48px clamp(16px, 4vw, 48px);
 }
 
 /* Headings */

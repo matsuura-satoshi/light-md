@@ -10,10 +10,58 @@ struct ThemeInfo: Identifiable, Codable {
     let isBuiltin: Bool
 }
 
+enum ContentWidthPreset: String, Codable, CaseIterable {
+    case comfortable
+    case wide
+    case extraWide
+    case unlimited
+
+    var displayName: String {
+        switch self {
+        case .comfortable: return "Comfortable (65ch)"
+        case .wide:        return "Wide (75ch)"
+        case .extraWide:   return "Extra Wide (90ch)"
+        case .unlimited:   return "Unlimited"
+        }
+    }
+
+    /// CSS value assigned to `--content-width`. Flows through the existing
+    /// font-override hot-swap so width changes apply without a full reload.
+    var cssValue: String {
+        switch self {
+        case .comfortable: return "min(65ch, 92vw)"
+        case .wide:        return "min(75ch, 92vw)"
+        case .extraWide:   return "min(90ch, 92vw)"
+        case .unlimited:   return "92vw"
+        }
+    }
+}
+
 struct UserPreferences: Codable {
     var selectedTheme: String = "warm-light"
     var fontFamily: String = "system-sans"
     var fontSize: Int = 16
+    var contentWidth: ContentWidthPreset = .wide
+
+    init() {}
+
+    private enum CodingKeys: String, CodingKey {
+        case selectedTheme
+        case fontFamily
+        case fontSize
+        case contentWidth
+    }
+
+    // Tolerant decoding so preferences.json files written by earlier versions
+    // (which lack newer keys like `contentWidth`) still load cleanly instead
+    // of wiping the user's theme/font choices back to defaults.
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        self.selectedTheme = try c.decodeIfPresent(String.self, forKey: .selectedTheme) ?? "warm-light"
+        self.fontFamily    = try c.decodeIfPresent(String.self, forKey: .fontFamily) ?? "system-sans"
+        self.fontSize      = try c.decodeIfPresent(Int.self,    forKey: .fontSize) ?? 16
+        self.contentWidth  = try c.decodeIfPresent(ContentWidthPreset.self, forKey: .contentWidth) ?? .wide
+    }
 }
 
 enum ThemeError: LocalizedError {
@@ -110,7 +158,13 @@ class ThemeManager {
         case "mono": family = #""SF Mono", Menlo, monospace"#
         default: family = preferences.fontFamily
         }
-        return ":root { --font-body: \(family); --font-size: \(preferences.fontSize)px; }"
+        return """
+        :root { \
+        --font-body: \(family); \
+        --font-size: \(preferences.fontSize)px; \
+        --content-width: \(preferences.contentWidth.cssValue); \
+        }
+        """
     }
 
     // MARK: - Theme listing

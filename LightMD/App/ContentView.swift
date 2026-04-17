@@ -135,6 +135,11 @@ struct ContentView: View {
                 appState.refreshCSSOnly()
             }
         }
+        .onChange(of: appState.themeManager.preferences.contentWidth) { _, _ in
+            if !appState.markdownContent.isEmpty {
+                appState.refreshCSSOnly()
+            }
+        }
     }
 
     private func drainPendingFiles() {
